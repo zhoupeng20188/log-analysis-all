@@ -13,6 +13,7 @@
         <module>log-analysis-common</module>
         <module>log-analysis-client</module>
         <module>log-analysis-sample</module>
+        <module>log-analysis-slave-node</module>
     </modules>
 
 
