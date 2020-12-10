@@ -1,0 +1,110 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+[32m :: Spring Boot :: [39m      [2m (v2.1.4.RELEASE)[0;39m
+
+[2m2020-12-09 17:15:33.814[0;39m [32m INFO[0;39m [35m8060[0;39m [2m---[0;39m [2m[           main][0;39m [36mcom.zp.sample.SpringBootClientTest      [0;39m [2m:[0;39m Starting SpringBootClientTest on DNC-01809201051 with PID 8060 (E:\project\log-analysis-all\log-analysis-sample\target\classes started by Administrator in E:\project\log-analysis-all)
+[2m2020-12-09 17:15:33.815[0;39m [32m INFO[0;39m [35m8060[0;39m [2m---[0;39m [2m[           main][0;39m [36mcom.zp.sample.SpringBootClientTest      [0;39m [2m:[0;39m No active profile set, falling back to default profiles: default
+[2m2020-12-09 17:15:34.139[0;39m [32m INFO[0;39m [35m8060[0;39m [2m---[0;39m [2m[           main][0;39m [36mcom.zp.sample.SpringBootClientTest      [0;39m [2m:[0;39m Started SpringBootClientTest in 0.565 seconds (JVM running for 1.424)
+
+获取到了控制台的日志:
+获取到了控制台的日志:  .   ____          _            __ _ _获取到了控制台的日志:
+获取到了控制台的日志: /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \获取到了控制台的日志:
+获取到了控制台的日志:( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \获取到了控制台的日志:
+获取到了控制台的日志: \\/  ___)| |_)| | | | | || (_| |  ) ) ) )获取到了控制台的日志:
+获取到了控制台的日志:  '  |____| .__|_| |_|_| |_\__, | / / / /获取到了控制台的日志:
+获取到了控制台的日志: =========|_|==============|___/=/_/_/_/获取到了控制台的日志:
+获取到了控制台的日志:[32m :: Spring Boot :: [39m      [2m (v2.1.4.RELEASE)[0;39m获取到了控制台的日志:
+获取到了控制台的日志:
+获取到了控制台的日志:[2m2020-12-09 17:21:20.458[0;39m [32m INFO[0;39m [35m15988[0;39m [2m---[0;39m [2m[           main][0;39m [36mcom.zp.sample.SpringBootClientTest      [0;39m [2m:[0;39m Starting SpringBootClientTest on DNC-01809201051 with PID 15988 (E:\project\log-analysis-all\log-analysis-sample\target\classes started by Administrator in E:\project\log-analysis-all)
+获取到了控制台的日志:[2m2020-12-09 17:21:20.459[0;39m [32m INFO[0;39m [35m15988[0;39m [2m---[0;39m [2m[           main][0;39m [36mcom.zp.sample.SpringBootClientTest      [0;39m [2m:[0;39m No active profile set, falling back to default profiles: default
+获取到了控制台的日志:[2m2020-12-09 17:21:20.806[0;39m [32m INFO[0;39m [35m15988[0;39m [2m---[0;39m [2m[           main][0;39m [36mcom.zp.sample.SpringBootClientTest      [0;39m [2m:[0;39m Started SpringBootClientTest in 0.613 seconds (JVM running for 1.489)
+获取到了控制台的日志:
+获取到了控制台的日志:  .   ____          _            __ _ _获取到了控制台的日志:
+获取到了控制台的日志: /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \获取到了控制台的日志:
+获取到了控制台的日志:( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \获取到了控制台的日志:
+获取到了控制台的日志: \\/  ___)| |_)| | | | | || (_| |  ) ) ) )获取到了控制台的日志:
+获取到了控制台的日志:  '  |____| .__|_| |_|_| |_\__, | / / / /获取到了控制台的日志:
+获取到了控制台的日志: =========|_|==============|___/=/_/_/_/获取到了控制台的日志:
+获取到了控制台的日志:[32m :: Spring Boot :: [39m      [2m (v2.1.4.RELEASE)[0;39m获取到了控制台的日志:
+获取到了控制台的日志:
+获取到了控制台的日志:[2m2020-12-09 17:34:09.804[0;39m [32m INFO[0;39m [35m14208[0;39m [2m---[0;39m [2m[           main][0;39m [36mcom.zp.sample.SpringBootClientTest      [0;39m [2m:[0;39m Starting SpringBootClientTest on DNC-01809201051 with PID 14208 (E:\project\log-analysis-all\log-analysis-sample\target\classes started by Administrator in E:\project\log-analysis-all)
+获取到了控制台的日志:[2m2020-12-09 17:34:09.805[0;39m [32m INFO[0;39m [35m14208[0;39m [2m---[0;39m [2m[           main][0;39m [36mcom.zp.sample.SpringBootClientTest      [0;39m [2m:[0;39m No active profile set, falling back to default profiles: default
+获取到了控制台的日志:[2m2020-12-09 17:34:10.112[0;39m [32m INFO[0;39m [35m14208[0;39m [2m---[0;39m [2m[           main][0;39m [36mcom.zp.sample.SpringBootClientTest      [0;39m [2m:[0;39m Started SpringBootClientTest in 0.522 seconds (JVM running for 1.225)
+获取到了控制台的日志:
+获取到了控制台的日志:  .   ____          _            __ _ _获取到了控制台的日志:
+获取到了控制台的日志: /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \获取到了控制台的日志:
+获取到了控制台的日志:( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \获取到了控制台的日志:
+获取到了控制台的日志: \\/  ___)| |_)| | | | | || (_| |  ) ) ) )获取到了控制台的日志:
+获取到了控制台的日志:  '  |____| .__|_| |_|_| |_\__, | / / / /获取到了控制台的日志:
+获取到了控制台的日志: =========|_|==============|___/=/_/_/_/获取到了控制台的日志:
+获取到了控制台的日志:[32m :: Spring Boot :: [39m      [2m (v2.1.4.RELEASE)[0;39m获取到了控制台的日志:
+获取到了控制台的日志:
+获取到了控制台的日志:[2m2020-12-09 17:34:35.891[0;39m [32m INFO[0;39m [35m23384[0;39m [2m---[0;39m [2m[           main][0;39m [36mcom.zp.sample.SpringBootClientTest      [0;39m [2m:[0;39m Starting SpringBootClientTest on DNC-01809201051 with PID 23384 (E:\project\log-analysis-all\log-analysis-sample\target\classes started by Administrator in E:\project\log-analysis-all)
+获取到了控制台的日志:[2m2020-12-09 17:34:35.892[0;39m [32m INFO[0;39m [35m23384[0;39m [2m---[0;39m [2m[           main][0;39m [36mcom.zp.sample.SpringBootClientTest      [0;39m [2m:[0;39m No active profile set, falling back to default profiles: default
+获取到了控制台的日志:[2m2020-12-09 17:34:36.168[0;39m [32m INFO[0;39m [35m23384[0;39m [2m---[0;39m [2m[           main][0;39m [36mcom.zp.sample.SpringBootClientTest      [0;39m [2m:[0;39m Started SpringBootClientTest in 0.472 seconds (JVM running for 1.182)
+
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+[32m :: Spring Boot :: [39m      [2m (v2.1.4.RELEASE)[0;39m
+
+[2m2020-12-10 10:41:39.573[0;39m [32m INFO[0;39m [35m9988[0;39m [2m---[0;39m [2m[           main][0;39m [36mcom.zp.sample.SpringBootClientTest      [0;39m [2m:[0;39m Starting SpringBootClientTest on DNC-01809201051 with PID 9988 (E:\project\log-analysis-all\log-analysis-sample\target\classes started by Administrator in E:\project\log-analysis-all)
+[2m2020-12-10 10:41:39.574[0;39m [32m INFO[0;39m [35m9988[0;39m [2m---[0;39m [2m[           main][0;39m [36mcom.zp.sample.SpringBootClientTest      [0;39m [2m:[0;39m No active profile set, falling back to default profiles: default
+[2m2020-12-10 10:41:39.964[0;39m [32m INFO[0;39m [35m9988[0;39m [2m---[0;39m [2m[           main][0;39m [36mcom.zp.sample.SpringBootClientTest      [0;39m [2m:[0;39m Started SpringBootClientTest in 0.703 seconds (JVM running for 2.015)
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+[32m :: Spring Boot :: [39m      [2m (v2.1.4.RELEASE)[0;39m
+
+[2m2020-12-10 10:47:12.234[0;39m [32m INFO[0;39m [35m9024[0;39m [2m---[0;39m [2m[           main][0;39m [36mcom.zp.sample.SpringBootClientTest      [0;39m [2m:[0;39m Starting SpringBootClientTest on DNC-01809201051 with PID 9024 (E:\project\log-analysis-all\log-analysis-sample\target\classes started by Administrator in E:\project\log-analysis-all)
+[2m2020-12-10 10:47:12.235[0;39m [32m INFO[0;39m [35m9024[0;39m [2m---[0;39m [2m[           main][0;39m [36mcom.zp.sample.SpringBootClientTest      [0;39m [2m:[0;39m No active profile set, falling back to default profiles: default
+[2m2020-12-10 10:47:12.542[0;39m [32m INFO[0;39m [35m9024[0;39m [2m---[0;39m [2m[           main][0;39m [36mcom.zp.sample.SpringBootClientTest      [0;39m [2m:[0;39m Started SpringBootClientTest in 274.045 seconds (JVM running for 274.984)
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v2.1.4.RELEASE)
+
+2020-12-10 10:47:21.030  INFO [35m15736 --- [           main] [36mcom.zp.sample.SpringBootClientTest       : Starting SpringBootClientTest on DNC-01809201051 with PID 15736 (E:\project\log-analysis-all\log-analysis-sample\target\classes started by Administrator in E:\project\log-analysis-all)
+2020-12-10 10:47:21.031  INFO [35m15736 --- [           main] [36mcom.zp.sample.SpringBootClientTest       : No active profile set, falling back to default profiles: default
+2020-12-10 10:47:21.361  INFO [35m15736 --- [           main] [36mcom.zp.sample.SpringBootClientTest       : Started SpringBootClientTest in 0.614 seconds (JVM running for 1.451)
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v2.1.4.RELEASE)
+
+2020-12-10 10:50:21.213  INFO 2476 --- [           main] com.zp.sample.SpringBootClientTest       : Starting SpringBootClientTest on DNC-01809201051 with PID 2476 (E:\project\log-analysis-all\log-analysis-sample\target\classes started by Administrator in E:\project\log-analysis-all)
+2020-12-10 10:50:21.214  INFO 2476 --- [           main] com.zp.sample.SpringBootClientTest       : No active profile set, falling back to default profiles: default
+2020-12-10 10:50:21.525  INFO 2476 --- [           main] com.zp.sample.SpringBootClientTest       : Started SpringBootClientTest in 0.564 seconds (JVM running for 1.526)
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v2.1.4.RELEASE)
+
+2020-12-10 10:51:54.412  INFO 19288 --- [           main] com.zp.sample.SpringBootClientTest       : Starting SpringBootClientTest on DNC-01809201051 with PID 19288 (E:\project\log-analysis-all\log-analysis-sample\target\classes started by Administrator in E:\project\log-analysis-all)
+2020-12-10 10:51:54.413  INFO 19288 --- [           main] com.zp.sample.SpringBootClientTest       : No active profile set, falling back to default profiles: default
+2020-12-10 10:51:54.726  INFO 19288 --- [           main] com.zp.sample.SpringBootClientTest       : Started SpringBootClientTest in 0.571 seconds (JVM running for 1.449)
