@@ -1,6 +1,7 @@
 package com.zp.slave;
 
 import com.zp.protobuf.MsgPOJO;
+import com.zp.utils.MsgUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -57,7 +58,13 @@ public class SlaveNodeServer {
         this.serverPort = serverPort;
     }
 
-    public void start() {
+    public void start(){
+        // 启动时加载index到内存中
+        MsgUtil.initIndex();
+        nettyStart();
+    }
+
+    public void nettyStart() {
         NioEventLoopGroup nioEventLoopGroup = new NioEventLoopGroup();
         Bootstrap bootstrap = new Bootstrap();
         try {

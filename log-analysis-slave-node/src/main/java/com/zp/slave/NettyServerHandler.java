@@ -27,10 +27,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 
-    private static ConcurrentHashMap<Long, Integer> msgIndexMap = new ConcurrentHashMap<>();
-
-    private static ConcurrentHashMap<String, ProjectMsg> projectMsgMap = new ConcurrentHashMap<>();
-
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         MsgPOJO.Msg.Builder msgSend = MsgPOJO.Msg.newBuilder()
@@ -54,7 +50,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         if (msgType == Consts.MSG_TYPE_UNCOMMITED) {
             log.info("接收到master的uncommited请求！");
             // 本地存储消息
-            MsgUtil.storeMsg(msgContent, msgIndexMap, projectMsgMap, msgId, projectId);
+            MsgUtil.storeMsg(msgContent, msgId, projectId);
             // 给master发送ACK消息
             MsgPOJO.Msg.Builder msgSend = MsgPOJO.Msg.newBuilder()
                     .setMsgId(msgId)
@@ -65,7 +61,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         } else if (msgType == Consts.MSG_TYPE_COMMITED) {
             log.info("接收到master的commited请求！");
             // 修改本地状态为commited
-            MsgUtil.changeToCommited(projectId, msgId, msgIndexMap, projectMsgMap);
+            MsgUtil.changeToCommited(projectId, msgId);
         }
 
     }

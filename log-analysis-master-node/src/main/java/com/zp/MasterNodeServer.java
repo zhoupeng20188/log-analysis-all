@@ -1,6 +1,7 @@
 package com.zp;
 
 import com.zp.protobuf.MsgPOJO;
+import com.zp.utils.MsgUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -11,8 +12,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -45,7 +44,13 @@ public class MasterNodeServer {
         this.port = port;
     }
 
-    public void start() {
+    public void start(){
+        // 启动时加载index到内存中
+        MsgUtil.initIndex();
+        nettyStart();
+    }
+
+    public void nettyStart() {
         try {
         // 默认个数为cpu核心数*2
         EventLoopGroup bossGroup = new NioEventLoopGroup();

@@ -1,10 +1,8 @@
 package com.zp.utils;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.util.CharsetUtil;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.nio.charset.Charset;
 
@@ -41,4 +39,5 @@ public class FileUtil {
             e.printStackTrace();
         }
     }
+
 }

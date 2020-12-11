@@ -1,5 +1,6 @@
 package com.zp.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -8,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @Author zp
  * @create 2020/12/11 11:11
  */
-public class ProjectMsg {
+public class ProjectMsg implements Serializable {
     private String projectId;
     /**
      * 消息indexList，在index对应的下标中存储的是消息的字节长度（从开始到现在）

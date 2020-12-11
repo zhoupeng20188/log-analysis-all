@@ -1,26 +1,17 @@
 package com.zp;
 
 import com.zp.constrants.Consts;
-import com.zp.entity.ProjectMsg;
 import com.zp.protobuf.MsgPOJO;
-import com.zp.utils.FileUtil;
 import com.zp.utils.MsgUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @Author zp
@@ -39,12 +30,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
      */
     private static ConcurrentHashMap<Long, Integer> ackMap = new ConcurrentHashMap<>();
 
-    /**
-     * 消息indexMap，key为msgId，value为index
-     */
-    private static ConcurrentHashMap<Long, Integer> msgIndexMap = new ConcurrentHashMap<>();
 
-    private static ConcurrentHashMap<String, ProjectMsg> projectMsgMap = new ConcurrentHashMap<>();
 
 
     @Override
@@ -78,7 +64,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
             if (ackCnt >= channelGroup.size() / 2 + 1) {
                 // 修改本地状态为commited
                 log.info("接收到超过半数的ack！成功写入！");
-                MsgUtil.changeToCommited(projectId, msgId, msgIndexMap, projectMsgMap);
+                MsgUtil.changeToCommited(projectId, msgId);
                 // 发送commited请求给自己的slave
                 for (Channel channel : channelGroup) {
                     msgSend = builder
@@ -93,7 +79,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         } else if (msgType == Consts.MSG_TYPE_CLIENT) {
             log.info("接收到客户端的请求！准备写入！");
             // 本地存储消息
-            MsgUtil.storeMsg(msgContent, msgIndexMap, projectMsgMap, msgId, projectId);
+            MsgUtil.storeMsg(msgContent, msgId, projectId);
 
             // 发送uncommited请求给自己的slave
             for (Channel channel : channelGroup) {
