@@ -7,4 +7,5 @@ message Msg { // 会在MsgPOJO外部类中生成一个Msg内部类
     int32 index =3; // 消息index
     string projectId =4; // projectId
     string content =5; // 内容
+    int32 port =6; // 正在连接的客户端的server端口
 }

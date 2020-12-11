@@ -29,11 +29,21 @@ public class SlaveNodeServer {
     private int slaveId;
     private String serverAddr;
     private int serverPort;
+    private int port;
 
-    public SlaveNodeServer(int slaveId, String serverAddr, int serverPort) {
+    public SlaveNodeServer(int slaveId, String serverAddr, int serverPort, int port) {
         this.slaveId = slaveId;
         this.serverAddr = serverAddr;
         this.serverPort = serverPort;
+        this.port = port;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 
     public int getSlaveId() {
@@ -63,11 +73,12 @@ public class SlaveNodeServer {
     public void start(){
         // 启动时加载index到内存中
         MsgUtil.initIndex();
-        nettyStart();
-        heartbeatThreadStart();
+        startNettyClient();
+        startHeartbeatThread();
+        startNettyServer();
     }
 
-    private void heartbeatThreadStart() {
+    private void startHeartbeatThread() {
         Executors.newSingleThreadScheduledExecutor()
                 .scheduleAtFixedRate(new Runnable() {
                     @Override
@@ -80,7 +91,7 @@ public class SlaveNodeServer {
                 },10, 10, TimeUnit.SECONDS);
     }
 
-    public void nettyStart() {
+    public void startNettyClient() {
         NioEventLoopGroup nioEventLoopGroup = new NioEventLoopGroup();
         Bootstrap bootstrap = new Bootstrap();
         try {
@@ -100,6 +111,39 @@ public class SlaveNodeServer {
 
             channel = channelFuture.channel();
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void startNettyServer() {
+        try {
+            // 默认个数为cpu核心数*2
+            EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+            // 默认个数为cpu核心数*2
+            EventLoopGroup workerGroup = new NioEventLoopGroup(1);
+
+            ServerBootstrap serverBootstrap = new ServerBootstrap();
+
+            serverBootstrap.group(bossGroup, workerGroup)
+                    .channel(NioServerSocketChannel.class)
+                    .option(ChannelOption.SO_BACKLOG, 128) // 设置线程队列得到的连接数
+                    .childOption(ChannelOption.SO_KEEPALIVE, true) // 设置保持活动连接状态
+                    .childHandler(new ChannelInitializer<SocketChannel>() {
+                        // 给pipeline设置处理器
+                        @Override
+                        protected void initChannel(SocketChannel socketChannel) throws Exception {
+                            socketChannel.pipeline().addLast(new ProtobufEncoder());
+                            socketChannel.pipeline().addLast(new ProtobufDecoder(MsgPOJO.Msg.getDefaultInstance()));
+                            socketChannel.pipeline().addLast(new NettyServerHandler());
+                        }
+                    });
+
+            log.info("slave node server started");
+            // 启动服务器
+            ChannelFuture channelFuture = serverBootstrap.bind(port).sync();
+            // 对关闭通道进行监听
+            channelFuture.channel().closeFuture().sync();
         } catch (Exception e) {
             e.printStackTrace();
         }

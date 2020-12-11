@@ -6,12 +6,15 @@ import com.zp.protobuf.MsgPOJO;
 import com.zp.utils.FileUtil;
 import com.zp.utils.MsgUtil;
 import com.zp.utils.RandomUtil;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.*;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.protobuf.ProtobufDecoder;
+import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,7 +34,8 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         MsgPOJO.Msg.Builder msgSend = MsgPOJO.Msg.newBuilder()
-                .setType(Consts.MSG_TYPE_ACTIVE_SLAVE);
+                .setType(Consts.MSG_TYPE_ACTIVE_SLAVE)
+                .setPort(19527);
         ctx.channel().writeAndFlush(msgSend);
     }
 
@@ -59,6 +63,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         log.info("master node地址：" + ctx.channel().remoteAddress());
         if (msgType == Consts.MSG_TYPE_HEARTBEAT_ACK) {
             log.info("接收到最新的slave集群地址：" + msgContent);
+            int port = msgRsrv.getPort();
         } else if (msgType == Consts.MSG_TYPE_UNCOMMITED) {
             log.info("接收到master的uncommited请求！");
             // 本地存储消息
@@ -75,7 +80,5 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
             // 修改本地状态为commited
             MsgUtil.changeToCommited(projectId, msgId);
         }
-
     }
-
 }

@@ -11,7 +11,9 @@ import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.net.SocketAddress;
+import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -31,6 +33,8 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
      */
     private static ConcurrentHashMap<Long, Integer> ackMap = new ConcurrentHashMap<>();
 
+    private static List<String> slaveServerList = new ArrayList<>();
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         MsgPOJO.Msg msgRsrv = (MsgPOJO.Msg) msg;
@@ -48,11 +52,12 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         MsgPOJO.Msg.Builder builder = MsgPOJO.Msg.newBuilder();
         MsgPOJO.Msg.Builder msgSend = null;
         if (msgType == Consts.MSG_TYPE_HEARTBEAT) {
-            // 发送heartbeat的ack，包括所有slave的地址
+            // 发送heartbeat的ack，包括所有slave server的地址
             String remoteAddress = "";
-            for (Channel channel : channelGroup) {
-                remoteAddress += channel.remoteAddress().toString();
+            for (String s : slaveServerList) {
+                remoteAddress += s + ",";
             }
+            remoteAddress =  remoteAddress.substring(0, remoteAddress.length() -1);
             msgSend = builder
                     .setMsgId(msgId)
                     .setProjectId(projectId)
@@ -62,6 +67,12 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         } else if (msgType == Consts.MSG_TYPE_ACTIVE_SLAVE) {
             log.info("slave：" + ctx.channel().remoteAddress() + " is connected");
             channelGroup.add(ctx.channel());
+            // 获取当前连接的客户端的ip
+            InetSocketAddress inetSocketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
+            String ip = inetSocketAddress.getAddress().getHostAddress();
+            int port = msgRsrv.getPort();
+            String address = ip + ":" + port;
+            slaveServerList.add(address);
         } else if (msgType == Consts.MSG_TYPE_UNCOMMITED_ACK) {
             log.info("接收到slave：" + ctx.channel().remoteAddress() + "的ack");
             int ackCnt = 0;

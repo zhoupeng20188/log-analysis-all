@@ -85,6 +85,16 @@ public final class MsgPOJO {
      */
     com.google.protobuf.ByteString
         getContentBytes();
+
+    /**
+     * <pre>
+     * 正在连接的客户端端口
+     * </pre>
+     *
+     * <code>int32 port = 6;</code>
+     * @return The port.
+     */
+    int getPort();
   }
   /**
    * <pre>
@@ -162,6 +172,11 @@ public final class MsgPOJO {
               String s = input.readStringRequireUtf8();
 
               content_ = s;
+              break;
+            }
+            case 48: {
+
+              port_ = input.readInt32();
               break;
             }
             default: {
@@ -333,6 +348,21 @@ public final class MsgPOJO {
       }
     }
 
+    public static final int PORT_FIELD_NUMBER = 6;
+    private int port_;
+    /**
+     * <pre>
+     * 正在连接的客户端端口
+     * </pre>
+     *
+     * <code>int32 port = 6;</code>
+     * @return The port.
+     */
+    @Override
+    public int getPort() {
+      return port_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @Override
     public final boolean isInitialized() {
@@ -362,6 +392,9 @@ public final class MsgPOJO {
       if (!getContentBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 5, content_);
       }
+      if (port_ != 0) {
+        output.writeInt32(6, port_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -389,6 +422,10 @@ public final class MsgPOJO {
       if (!getContentBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, content_);
       }
+      if (port_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(6, port_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -414,6 +451,8 @@ public final class MsgPOJO {
           .equals(other.getProjectId())) return false;
       if (!getContent()
           .equals(other.getContent())) return false;
+      if (getPort()
+          != other.getPort()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -436,6 +475,8 @@ public final class MsgPOJO {
       hash = (53 * hash) + getProjectId().hashCode();
       hash = (37 * hash) + CONTENT_FIELD_NUMBER;
       hash = (53 * hash) + getContent().hashCode();
+      hash = (37 * hash) + PORT_FIELD_NUMBER;
+      hash = (53 * hash) + getPort();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -583,6 +624,8 @@ public final class MsgPOJO {
 
         content_ = "";
 
+        port_ = 0;
+
         return this;
       }
 
@@ -614,6 +657,7 @@ public final class MsgPOJO {
         result.index_ = index_;
         result.projectId_ = projectId_;
         result.content_ = content_;
+        result.port_ = port_;
         onBuilt();
         return result;
       }
@@ -678,6 +722,9 @@ public final class MsgPOJO {
         if (!other.getContent().isEmpty()) {
           content_ = other.content_;
           onChanged();
+        }
+        if (other.getPort() != 0) {
+          setPort(other.getPort());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -1028,6 +1075,49 @@ public final class MsgPOJO {
         onChanged();
         return this;
       }
+
+      private int port_ ;
+      /**
+       * <pre>
+       * 正在连接的客户端端口
+       * </pre>
+       *
+       * <code>int32 port = 6;</code>
+       * @return The port.
+       */
+      @Override
+      public int getPort() {
+        return port_;
+      }
+      /**
+       * <pre>
+       * 正在连接的客户端端口
+       * </pre>
+       *
+       * <code>int32 port = 6;</code>
+       * @param value The port to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPort(int value) {
+        
+        port_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 正在连接的客户端端口
+       * </pre>
+       *
+       * <code>int32 port = 6;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearPort() {
+        
+        port_ = 0;
+        onChanged();
+        return this;
+      }
       @Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -1095,9 +1185,10 @@ public final class MsgPOJO {
       descriptor;
   static {
     String[] descriptorData = {
-      "\n\tMsg.proto\"U\n\003Msg\022\r\n\005msgId\030\001 \001(\003\022\014\n\004typ" +
+      "\n\tMsg.proto\"c\n\003Msg\022\r\n\005msgId\030\001 \001(\003\022\014\n\004typ" +
       "e\030\002 \001(\005\022\r\n\005index\030\003 \001(\005\022\021\n\tprojectId\030\004 \001(" +
-      "\t\022\017\n\007content\030\005 \001(\tB\tB\007MsgPOJOb\006proto3"
+      "\t\022\017\n\007content\030\005 \001(\t\022\014\n\004port\030\006 \001(\005B\tB\007MsgP" +
+      "OJOb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -1108,7 +1199,7 @@ public final class MsgPOJO {
     internal_static_Msg_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_Msg_descriptor,
-        new String[] { "MsgId", "Type", "Index", "ProjectId", "Content", });
+        new String[] { "MsgId", "Type", "Index", "ProjectId", "Content", "Port", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

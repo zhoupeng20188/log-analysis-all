@@ -47,15 +47,15 @@ public class MasterNodeServer {
     public void start(){
         // 启动时加载index到内存中
         MsgUtil.initIndex();
-        nettyStart();
+        startNettyServer();
     }
 
-    public void nettyStart() {
+    public void startNettyServer() {
         try {
         // 默认个数为cpu核心数*2
-        EventLoopGroup bossGroup = new NioEventLoopGroup();
+        EventLoopGroup bossGroup = new NioEventLoopGroup(2);
         // 默认个数为cpu核心数*2
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        EventLoopGroup workerGroup = new NioEventLoopGroup(2);
 
         ServerBootstrap serverBootstrap = new ServerBootstrap();
 
