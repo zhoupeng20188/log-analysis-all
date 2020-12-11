@@ -1,5 +1,6 @@
 package com.zp;
 
+import com.zp.protobuf.MsgPOJO;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -8,6 +9,8 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.protobuf.ProtobufDecoder;
+import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import lombok.extern.slf4j.Slf4j;
@@ -59,8 +62,8 @@ public class MasterNodeServer {
                         // 给pipeline设置处理器
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
-                            socketChannel.pipeline().addLast("decoder", new StringDecoder());
-                            socketChannel.pipeline().addLast("encoder", new StringEncoder());
+                            socketChannel.pipeline().addLast(new ProtobufEncoder());
+                            socketChannel.pipeline().addLast(new ProtobufDecoder(MsgPOJO.Msg.getDefaultInstance()));
                             socketChannel.pipeline().addLast(new NettyServerHandler());
                         }
                     });

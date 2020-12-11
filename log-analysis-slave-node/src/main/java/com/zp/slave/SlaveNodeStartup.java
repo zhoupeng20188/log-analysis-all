@@ -22,7 +22,7 @@ public class SlaveNodeStartup {
             System.exit(-1);
 //            return null;
         }
-        new SlaveNodeServer(1, 95277).start();
+        new SlaveNodeServer(1, "127.0.0.1", 9527).start();
     }
 
     public static Options buildCommandlineOptions(final Options options) {

@@ -8,7 +8,7 @@ import com.zp.LogAnalysisClient;
  */
 public class ClientTest {
     public static void main(String[] args) throws InterruptedException {
-        LogAnalysisClient logAnalysisClient = new LogAnalysisClient("127.0.0.1", 9527);
+        LogAnalysisClient logAnalysisClient = new LogAnalysisClient("test01","127.0.0.1", 9527);
         logAnalysisClient.start();
         System.out.println("client test ...");
         System.out.println("client test222 ...");

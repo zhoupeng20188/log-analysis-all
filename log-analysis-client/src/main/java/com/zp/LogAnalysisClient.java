@@ -1,6 +1,8 @@
 package com.zp;
 
 
+import com.zp.constrants.Consts;
+import com.zp.protobuf.MsgPOJO;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
@@ -9,10 +11,13 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.protobuf.ProtobufDecoder;
+import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import sun.rmi.runtime.Log;
 
 import java.io.PrintStream;
@@ -29,17 +34,52 @@ public class LogAnalysisClient {
 
     private Channel channel;
 
+    private String projectId;
+
     private String serverAddr;
 
     private int serverPort;
 
-    public LogAnalysisClient(String serverAddr, int serverPort) {
+    public LogAnalysisClient(String projectId, String serverAddr, int serverPort) {
+        this.projectId = projectId;
         this.serverAddr = serverAddr;
         this.serverPort = serverPort;
     }
 
+    public String getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
+
+    public String getServerAddr() {
+        return serverAddr;
+    }
+
+    public void setServerAddr(String serverAddr) {
+        this.serverAddr = serverAddr;
+    }
+
+    public int getServerPort() {
+        return serverPort;
+    }
+
+    public void setServerPort(int serverPort) {
+        this.serverPort = serverPort;
+    }
+
+    public static Logger getLog() {
+        return log;
+    }
+
     public void write(String s) {
-        channel.writeAndFlush(s);
+        MsgPOJO.Msg.Builder msgSend = MsgPOJO.Msg.newBuilder()
+                .setProjectId(projectId)
+                .setType(Consts.MSG_TYPE_CLIENT)
+                .setContent(s);
+        channel.writeAndFlush(msgSend);
     }
 
     public void start() {
@@ -62,8 +102,8 @@ public class LogAnalysisClient {
                     .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
-                            socketChannel.pipeline().addLast("decoder", new StringDecoder());
-                            socketChannel.pipeline().addLast("encoder", new StringEncoder());
+                            socketChannel.pipeline().addLast(new ProtobufEncoder());
+                            socketChannel.pipeline().addLast(new ProtobufDecoder(MsgPOJO.Msg.getDefaultInstance()));
                         }
                     });
             log.info("log-analysis-client is started...");

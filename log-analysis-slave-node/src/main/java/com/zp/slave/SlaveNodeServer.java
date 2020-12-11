@@ -1,5 +1,7 @@
 package com.zp.slave;
 
+import com.zp.protobuf.MsgPOJO;
+import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -8,6 +10,9 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.protobuf.ProtobufDecoder;
+import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import lombok.extern.slf4j.Slf4j;
@@ -19,11 +24,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SlaveNodeServer {
     private int slaveId;
-    private int port;
+    private String serverAddr;
+    private int serverPort;
 
-    public SlaveNodeServer(int slaveId, int port) {
+    public SlaveNodeServer(int slaveId, String serverAddr, int serverPort) {
         this.slaveId = slaveId;
-        this.port = port;
+        this.serverAddr = serverAddr;
+        this.serverPort = serverPort;
     }
 
     public int getSlaveId() {
@@ -34,45 +41,42 @@ public class SlaveNodeServer {
         this.slaveId = slaveId;
     }
 
-    public int getPort() {
-        return port;
+    public String getServerAddr() {
+        return serverAddr;
     }
 
-    public void setPort(int port) {
-        this.port = port;
+    public void setServerAddr(String serverAddr) {
+        this.serverAddr = serverAddr;
+    }
+
+    public int getServerPort() {
+        return serverPort;
+    }
+
+    public void setServerPort(int serverPort) {
+        this.serverPort = serverPort;
     }
 
     public void start() {
+        NioEventLoopGroup nioEventLoopGroup = new NioEventLoopGroup();
+        Bootstrap bootstrap = new Bootstrap();
         try {
-        // 默认个数为cpu核心数*2
-        EventLoopGroup bossGroup = new NioEventLoopGroup();
-        // 默认个数为cpu核心数*2
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
-
-        ServerBootstrap serverBootstrap = new ServerBootstrap();
-
-            serverBootstrap.group(bossGroup, workerGroup)
-                    .channel(NioServerSocketChannel.class)
-                    .option(ChannelOption.SO_BACKLOG, 128) // 设置线程队列得到的连接数
-                    .childOption(ChannelOption.SO_KEEPALIVE, true) // 设置保持活动连接状态
-                    .childHandler(new ChannelInitializer<SocketChannel>() {
-                        // 给pipeline设置处理器
+            bootstrap.group(nioEventLoopGroup)
+                    .channel(NioSocketChannel.class)
+                    .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
-                            socketChannel.pipeline().addLast("decoder", new StringDecoder());
-                            socketChannel.pipeline().addLast("encoder", new StringEncoder());
+                            socketChannel.pipeline().addLast(new ProtobufEncoder());
+                            socketChannel.pipeline().addLast(new ProtobufDecoder(MsgPOJO.Msg.getDefaultInstance()));
                             socketChannel.pipeline().addLast(new NettyServerHandler());
                         }
                     });
+            log.info("slave node-" + slaveId + " is started...");
+            // 客户端连接服务端
+            ChannelFuture channelFuture = bootstrap.connect(serverAddr, serverPort);
 
-            log.info("slave node-" + slaveId + " is ready...");
-            // 启动服务器
-            ChannelFuture channelFuture = serverBootstrap.bind(port).sync();
-            // 对关闭通道进行监听
-            channelFuture.channel().closeFuture().sync();
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 }

@@ -11,7 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class SpringBootClientTest {
     public static void main(String[] args) {
-        LogAnalysisClient logAnalysisClient = new LogAnalysisClient("127.0.0.1", 9527);
+        LogAnalysisClient logAnalysisClient = new LogAnalysisClient("springboot01","127.0.0.1", 9527);
         logAnalysisClient.start();
         SpringApplication.run(SpringBootClientTest.class, args);
     }
