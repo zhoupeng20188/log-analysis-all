@@ -1,8 +1,10 @@
 package com.zp.slave;
 
 import com.zp.constrants.Consts;
+import com.zp.entity.ProjectMsg;
 import com.zp.protobuf.MsgPOJO;
 import com.zp.utils.FileUtil;
+import com.zp.utils.MsgUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -13,6 +15,10 @@ import io.netty.util.concurrent.GlobalEventExecutor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @Author zp
@@ -20,6 +26,10 @@ import java.io.File;
  */
 @Slf4j
 public class NettyServerHandler extends ChannelInboundHandlerAdapter {
+
+    private static ConcurrentHashMap<Long, Integer> msgIndexMap = new ConcurrentHashMap<>();
+
+    private static ConcurrentHashMap<String, ProjectMsg> projectMsgMap = new ConcurrentHashMap<>();
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
@@ -31,6 +41,8 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         MsgPOJO.Msg msgRsrv = (MsgPOJO.Msg) msg;
+        // 消息id
+        long msgId = msgRsrv.getMsgId();
         // 消息内容
         String msgContent = msgRsrv.getContent();
         // 消息类型
@@ -40,13 +52,20 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         log.info("接收到master node消息：" + msg);
         log.info("master node地址：" + ctx.channel().remoteAddress());
         if (msgType == Consts.MSG_TYPE_UNCOMMITED) {
-            // 顺序写文件
-            File file = new File(projectId + ".log");
-            FileUtil.write(file, msgContent);
+            log.info("接收到master的uncommited请求！");
+            // 本地存储消息
+            MsgUtil.storeMsg(msgContent, msgIndexMap, projectMsgMap, msgId, projectId);
             // 给master发送ACK消息
             MsgPOJO.Msg.Builder msgSend = MsgPOJO.Msg.newBuilder()
-                    .setType(Consts.MSG_TYPE_ACK).setContent(msgContent);
+                    .setMsgId(msgId)
+                    .setProjectId(projectId)
+                    .setType(Consts.MSG_TYPE_ACK)
+                    .setContent(msgContent);
             ctx.channel().writeAndFlush(msgSend);
+        } else if (msgType == Consts.MSG_TYPE_COMMITED) {
+            log.info("接收到master的commited请求！");
+            // 修改本地状态为commited
+            MsgUtil.changeToCommited(projectId, msgId, msgIndexMap, projectMsgMap);
         }
 
     }

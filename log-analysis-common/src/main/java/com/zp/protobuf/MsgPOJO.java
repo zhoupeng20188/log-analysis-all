@@ -21,10 +21,10 @@ public final class MsgPOJO {
      * int32对应java中的int型，1表示属性序号，不是值
      * </pre>
      *
-     * <code>int32 msgId = 1;</code>
+     * <code>int64 msgId = 1;</code>
      * @return The msgId.
      */
-    int getMsgId();
+    long getMsgId();
 
     /**
      * <pre>
@@ -139,7 +139,7 @@ public final class MsgPOJO {
               break;
             case 8: {
 
-              msgId_ = input.readInt32();
+              msgId_ = input.readInt64();
               break;
             }
             case 16: {
@@ -197,17 +197,17 @@ public final class MsgPOJO {
     }
 
     public static final int MSGID_FIELD_NUMBER = 1;
-    private int msgId_;
+    private long msgId_;
     /**
      * <pre>
      * int32对应java中的int型，1表示属性序号，不是值
      * </pre>
      *
-     * <code>int32 msgId = 1;</code>
+     * <code>int64 msgId = 1;</code>
      * @return The msgId.
      */
     @Override
-    public int getMsgId() {
+    public long getMsgId() {
       return msgId_;
     }
 
@@ -347,8 +347,8 @@ public final class MsgPOJO {
     @Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (msgId_ != 0) {
-        output.writeInt32(1, msgId_);
+      if (msgId_ != 0L) {
+        output.writeInt64(1, msgId_);
       }
       if (type_ != 0) {
         output.writeInt32(2, type_);
@@ -371,9 +371,9 @@ public final class MsgPOJO {
       if (size != -1) return size;
 
       size = 0;
-      if (msgId_ != 0) {
+      if (msgId_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(1, msgId_);
+          .computeInt64Size(1, msgId_);
       }
       if (type_ != 0) {
         size += com.google.protobuf.CodedOutputStream
@@ -426,7 +426,8 @@ public final class MsgPOJO {
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + MSGID_FIELD_NUMBER;
-      hash = (53 * hash) + getMsgId();
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getMsgId());
       hash = (37 * hash) + TYPE_FIELD_NUMBER;
       hash = (53 * hash) + getType();
       hash = (37 * hash) + INDEX_FIELD_NUMBER;
@@ -572,7 +573,7 @@ public final class MsgPOJO {
       @Override
       public Builder clear() {
         super.clear();
-        msgId_ = 0;
+        msgId_ = 0L;
 
         type_ = 0;
 
@@ -661,7 +662,7 @@ public final class MsgPOJO {
 
       public Builder mergeFrom(Msg other) {
         if (other == Msg.getDefaultInstance()) return this;
-        if (other.getMsgId() != 0) {
+        if (other.getMsgId() != 0L) {
           setMsgId(other.getMsgId());
         }
         if (other.getType() != 0) {
@@ -707,17 +708,17 @@ public final class MsgPOJO {
         return this;
       }
 
-      private int msgId_ ;
+      private long msgId_ ;
       /**
        * <pre>
        * int32对应java中的int型，1表示属性序号，不是值
        * </pre>
        *
-       * <code>int32 msgId = 1;</code>
+       * <code>int64 msgId = 1;</code>
        * @return The msgId.
        */
       @Override
-      public int getMsgId() {
+      public long getMsgId() {
         return msgId_;
       }
       /**
@@ -725,11 +726,11 @@ public final class MsgPOJO {
        * int32对应java中的int型，1表示属性序号，不是值
        * </pre>
        *
-       * <code>int32 msgId = 1;</code>
+       * <code>int64 msgId = 1;</code>
        * @param value The msgId to set.
        * @return This builder for chaining.
        */
-      public Builder setMsgId(int value) {
+      public Builder setMsgId(long value) {
         
         msgId_ = value;
         onChanged();
@@ -740,12 +741,12 @@ public final class MsgPOJO {
        * int32对应java中的int型，1表示属性序号，不是值
        * </pre>
        *
-       * <code>int32 msgId = 1;</code>
+       * <code>int64 msgId = 1;</code>
        * @return This builder for chaining.
        */
       public Builder clearMsgId() {
         
-        msgId_ = 0;
+        msgId_ = 0L;
         onChanged();
         return this;
       }
@@ -1094,7 +1095,7 @@ public final class MsgPOJO {
       descriptor;
   static {
     String[] descriptorData = {
-      "\n\tMsg.proto\"U\n\003Msg\022\r\n\005msgId\030\001 \001(\005\022\014\n\004typ" +
+      "\n\tMsg.proto\"U\n\003Msg\022\r\n\005msgId\030\001 \001(\003\022\014\n\004typ" +
       "e\030\002 \001(\005\022\r\n\005index\030\003 \001(\005\022\021\n\tprojectId\030\004 \001(" +
       "\t\022\017\n\007content\030\005 \001(\tB\tB\007MsgPOJOb\006proto3"
     };

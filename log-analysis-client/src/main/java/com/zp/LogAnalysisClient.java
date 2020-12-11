@@ -3,6 +3,7 @@ package com.zp;
 
 import com.zp.constrants.Consts;
 import com.zp.protobuf.MsgPOJO;
+import com.zp.utils.SnowFlakeUUID;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
@@ -21,6 +22,7 @@ import org.slf4j.Logger;
 import sun.rmi.runtime.Log;
 
 import java.io.PrintStream;
+import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -78,6 +80,7 @@ public class LogAnalysisClient {
         MsgPOJO.Msg.Builder msgSend = MsgPOJO.Msg.newBuilder()
                 .setProjectId(projectId)
                 .setType(Consts.MSG_TYPE_CLIENT)
+                .setMsgId(SnowFlakeUUID.nextId())
                 .setContent(s);
         channel.writeAndFlush(msgSend);
     }
@@ -103,7 +106,6 @@ public class LogAnalysisClient {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             socketChannel.pipeline().addLast(new ProtobufEncoder());
-                            socketChannel.pipeline().addLast(new ProtobufDecoder(MsgPOJO.Msg.getDefaultInstance()));
                         }
                     });
             log.info("log-analysis-client is started...");
@@ -123,7 +125,6 @@ public class LogAnalysisClient {
             public void run() {
                 synchronized (LogStore.class){
                     String content = LogStore.getContent();
-//                System.out.println("线程执行。。content="+content + "end..");
                     if (content != null && !content.equals("")) {
                         // 日志不为空时，上报
                         write(LogStore.getContent());
