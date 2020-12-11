@@ -11,6 +11,7 @@ import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.net.SocketAddress;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -30,9 +31,6 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
      */
     private static ConcurrentHashMap<Long, Integer> ackMap = new ConcurrentHashMap<>();
 
-
-
-
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         MsgPOJO.Msg msgRsrv = (MsgPOJO.Msg) msg;
@@ -49,10 +47,22 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         log.info("客户端地址：" + ctx.channel().remoteAddress());
         MsgPOJO.Msg.Builder builder = MsgPOJO.Msg.newBuilder();
         MsgPOJO.Msg.Builder msgSend = null;
-        if (msgType == Consts.MSG_TYPE_ACTIVE_SLAVE) {
+        if (msgType == Consts.MSG_TYPE_HEARTBEAT) {
+            // 发送heartbeat的ack，包括所有slave的地址
+            String remoteAddress = "";
+            for (Channel channel : channelGroup) {
+                remoteAddress += channel.remoteAddress().toString();
+            }
+            msgSend = builder
+                    .setMsgId(msgId)
+                    .setProjectId(projectId)
+                    .setType(Consts.MSG_TYPE_HEARTBEAT_ACK)
+                    .setContent(remoteAddress);
+            ctx.channel().writeAndFlush(msgSend);
+        } else if (msgType == Consts.MSG_TYPE_ACTIVE_SLAVE) {
             log.info("slave：" + ctx.channel().remoteAddress() + " is connected");
             channelGroup.add(ctx.channel());
-        } else if (msgType == Consts.MSG_TYPE_ACK) {
+        } else if (msgType == Consts.MSG_TYPE_UNCOMMITED_ACK) {
             log.info("接收到slave：" + ctx.channel().remoteAddress() + "的ack");
             int ackCnt = 0;
             if (ackMap.get(msgId) != null) {

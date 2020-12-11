@@ -5,6 +5,7 @@ import com.zp.entity.ProjectMsg;
 import com.zp.protobuf.MsgPOJO;
 import com.zp.utils.FileUtil;
 import com.zp.utils.MsgUtil;
+import com.zp.utils.RandomUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -35,6 +36,15 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        log.info("master："+ ctx.channel().remoteAddress() + " is down");
+        log.info("preparing to elect new leader");
+        int sleepTime = RandomUtil.electRandom();
+        Thread.sleep(sleepTime);
+        // 发送投票请求给其它slave
+    }
+
+    @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         MsgPOJO.Msg msgRsrv = (MsgPOJO.Msg) msg;
         // 消息id
@@ -47,7 +57,9 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         String projectId = msgRsrv.getProjectId();
         log.info("接收到master node消息：" + msg);
         log.info("master node地址：" + ctx.channel().remoteAddress());
-        if (msgType == Consts.MSG_TYPE_UNCOMMITED) {
+        if (msgType == Consts.MSG_TYPE_HEARTBEAT_ACK) {
+            log.info("接收到最新的slave集群地址：" + msgContent);
+        } else if (msgType == Consts.MSG_TYPE_UNCOMMITED) {
             log.info("接收到master的uncommited请求！");
             // 本地存储消息
             MsgUtil.storeMsg(msgContent, msgId, projectId);
@@ -55,7 +67,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
             MsgPOJO.Msg.Builder msgSend = MsgPOJO.Msg.newBuilder()
                     .setMsgId(msgId)
                     .setProjectId(projectId)
-                    .setType(Consts.MSG_TYPE_ACK)
+                    .setType(Consts.MSG_TYPE_UNCOMMITED_ACK)
                     .setContent(msgContent);
             ctx.channel().writeAndFlush(msgSend);
         } else if (msgType == Consts.MSG_TYPE_COMMITED) {

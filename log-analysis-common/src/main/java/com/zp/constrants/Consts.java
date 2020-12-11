@@ -6,8 +6,10 @@ package com.zp.constrants;
  */
 public class Consts {
     public static final int MSG_TYPE_ACTIVE_SLAVE = 1;
-    public static final int MSG_TYPE_ACK = 2;
+    public static final int MSG_TYPE_UNCOMMITED_ACK = 2;
     public static final int MSG_TYPE_UNCOMMITED = 3;
     public static final int MSG_TYPE_COMMITED = 4;
     public static final int MSG_TYPE_CLIENT = 5;
+    public static final int MSG_TYPE_HEARTBEAT = 6;
+    public static final int MSG_TYPE_HEARTBEAT_ACK = 7;
 }
