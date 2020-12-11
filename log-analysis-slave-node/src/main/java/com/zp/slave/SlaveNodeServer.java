@@ -1,6 +1,7 @@
 package com.zp.slave;
 
 import com.zp.constrants.Consts;
+import com.zp.protobuf.ElectionPOJO;
 import com.zp.protobuf.MsgPOJO;
 import com.zp.utils.MsgUtil;
 import io.netty.bootstrap.Bootstrap;
@@ -84,7 +85,8 @@ public class SlaveNodeServer {
                     @Override
                     public void run() {
                         MsgPOJO.Msg.Builder msgSend = MsgPOJO.Msg.newBuilder()
-                                .setType(Consts.MSG_TYPE_HEARTBEAT);
+                                .setType(Consts.MSG_TYPE_HEARTBEAT)
+                                .setPort(port);
                         channel.writeAndFlush(msgSend);
                         log.info("send heartbeat to master node：" + channel.remoteAddress());
                     }
@@ -134,8 +136,8 @@ public class SlaveNodeServer {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             socketChannel.pipeline().addLast(new ProtobufEncoder());
-                            socketChannel.pipeline().addLast(new ProtobufDecoder(MsgPOJO.Msg.getDefaultInstance()));
-                            socketChannel.pipeline().addLast(new NettyServerHandler());
+                            socketChannel.pipeline().addLast(new ProtobufDecoder(ElectionPOJO.Election.getDefaultInstance()));
+                            socketChannel.pipeline().addLast(new ElectionNettyHandler());
                         }
                     });
 

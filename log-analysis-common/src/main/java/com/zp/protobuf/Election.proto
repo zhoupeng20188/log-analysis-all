@@ -6,5 +6,5 @@ message Election { // 会在ElectionPOJO外部类中生成一个Election内部�
     int32 type =2; // 消息类型
     int32 index =3; // 消息index
     int32 ElectionId =4; // 选举的轮次
-    int32 voteResult =4; // 投票结果，1：通过，0：不通过
+    int32 voteResult =5; // 投票结果，1：通过，0：不通过
 }

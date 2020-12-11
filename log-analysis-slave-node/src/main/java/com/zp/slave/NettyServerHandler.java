@@ -2,10 +2,12 @@ package com.zp.slave;
 
 import com.zp.constrants.Consts;
 import com.zp.entity.ProjectMsg;
+import com.zp.protobuf.ElectionPOJO;
 import com.zp.protobuf.MsgPOJO;
 import com.zp.utils.FileUtil;
 import com.zp.utils.MsgUtil;
 import com.zp.utils.RandomUtil;
+import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.group.ChannelGroup;
@@ -13,6 +15,7 @@ import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.util.concurrent.GlobalEventExecutor;
@@ -32,6 +35,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 
     private int port;
+
+    private String otherSlaveAddrs;
 
     public NettyServerHandler() {
     }
@@ -54,7 +59,42 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         log.info("preparing to elect new leader");
         int sleepTime = RandomUtil.electRandom();
         Thread.sleep(sleepTime);
+        // 选举轮次+1
+        Election.id++;
+        // 先投自己一票
+        Election.voteCnt++;
         // 发送投票请求给其它slave
+        String[] slaveAddr = otherSlaveAddrs.split(",");
+        for (String s : slaveAddr) {
+            String[] split = s.split(":");
+            String ip = split[0];
+            String port = split[1];
+            startNettyClient(ip, port);
+
+        }
+    }
+
+    public void startNettyClient(String ip, String port) {
+        NioEventLoopGroup nioEventLoopGroup = new NioEventLoopGroup();
+        Bootstrap bootstrap = new Bootstrap();
+        try {
+            bootstrap.group(nioEventLoopGroup)
+                    .channel(NioSocketChannel.class)
+                    .handler(new ChannelInitializer<SocketChannel>() {
+                        @Override
+                        protected void initChannel(SocketChannel socketChannel) throws Exception {
+                            socketChannel.pipeline().addLast(new ProtobufEncoder());
+                            socketChannel.pipeline().addLast(new ProtobufDecoder(ElectionPOJO.Election.getDefaultInstance()));
+                            socketChannel.pipeline().addLast(new ElectionNettyHandler());
+                        }
+                    });
+            // 客户端连接服务端
+            ChannelFuture channelFuture = bootstrap.connect(ip, Integer.parseInt(port));
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -72,7 +112,8 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         log.info("master node地址：" + ctx.channel().remoteAddress());
         if (msgType == Consts.MSG_TYPE_HEARTBEAT_ACK) {
             log.info("接收到最新的slave集群地址：" + msgContent);
-            int port = msgRsrv.getPort();
+            otherSlaveAddrs = msgContent;
+
         } else if (msgType == Consts.MSG_TYPE_UNCOMMITED) {
             log.info("接收到master的uncommited请求！");
             // 本地存储消息

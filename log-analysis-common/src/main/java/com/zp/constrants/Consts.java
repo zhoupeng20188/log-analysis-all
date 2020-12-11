@@ -12,4 +12,6 @@ public class Consts {
     public static final int MSG_TYPE_CLIENT = 5;
     public static final int MSG_TYPE_HEARTBEAT = 6;
     public static final int MSG_TYPE_HEARTBEAT_ACK = 7;
+    public static final int MSG_TYPE_ELECTION = 8;
+    public static final int MSG_TYPE_ELECTION_ACK = 9;
 }
