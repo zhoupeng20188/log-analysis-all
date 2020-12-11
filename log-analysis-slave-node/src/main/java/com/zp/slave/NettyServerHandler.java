@@ -31,11 +31,20 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 
+    private int port;
+
+    public NettyServerHandler() {
+    }
+
+    public NettyServerHandler(int port) {
+        this.port = port;
+    }
+
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         MsgPOJO.Msg.Builder msgSend = MsgPOJO.Msg.newBuilder()
                 .setType(Consts.MSG_TYPE_ACTIVE_SLAVE)
-                .setPort(19527);
+                .setPort(port);
         ctx.channel().writeAndFlush(msgSend);
     }
 

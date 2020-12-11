@@ -22,7 +22,9 @@ public class SlaveNodeStartup {
             System.exit(-1);
 //            return null;
         }
-        new SlaveNodeServer(1, "127.0.0.1", 9527, 19527).start();
+        String arg0 = args[0];
+        String arg1 = args[1];
+        new SlaveNodeServer(Integer.parseInt(arg0), "127.0.0.1", 9527, Integer.parseInt(arg1)).start();
     }
 
     public static Options buildCommandlineOptions(final Options options) {

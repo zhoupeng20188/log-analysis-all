@@ -102,7 +102,7 @@ public class SlaveNodeServer {
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             socketChannel.pipeline().addLast(new ProtobufEncoder());
                             socketChannel.pipeline().addLast(new ProtobufDecoder(MsgPOJO.Msg.getDefaultInstance()));
-                            socketChannel.pipeline().addLast(new NettyServerHandler());
+                            socketChannel.pipeline().addLast(new NettyServerHandler(port));
                         }
                     });
             log.info("slave node-" + slaveId + " is started...");
