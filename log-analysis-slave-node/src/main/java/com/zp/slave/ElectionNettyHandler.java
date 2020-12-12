@@ -40,7 +40,7 @@ public class ElectionNettyHandler extends ChannelInboundHandlerAdapter {
             Election.voteCnt++;
             log.info("接收到salve：" + ctx.channel().remoteAddress() + "的投票结果：" + election.getVoteResult());
             if (Election.voteCnt >= Election.slaveNum / 2 + 1) {
-                log.info("slave：" + Election.slaveAddr + "成为 master!");
+                log.info("slave：" + Election.port + "成为 master!");
 
             }
         }

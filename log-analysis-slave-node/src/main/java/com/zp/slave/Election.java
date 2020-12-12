@@ -22,7 +22,11 @@ public class Election {
      */
     public static int voteCnt;
     /**
-     * 当前slave地址
+     * 是否为leader
      */
-    public static String slaveAddr;
+    public static boolean isLeader;
+    /**
+     * 当前slave port
+     */
+    public static int port;
 }

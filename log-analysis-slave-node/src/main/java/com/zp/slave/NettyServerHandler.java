@@ -61,6 +61,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         Thread.sleep(sleepTime);
         // 选举轮次+1
         Election.id++;
+        Election.port = port;
         // 先投自己一票
         Election.voteCnt++;
         // 发送投票请求给其它slave
