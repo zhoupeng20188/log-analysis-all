@@ -46,7 +46,8 @@ public class ElectionNettyServerHandler extends ChannelInboundHandlerAdapter {
 
         } else if (type == Consts.MSG_TYPE_ELECTION_MASTER) {
             // 更新master信息
-            ElectionUtil.handleTypeMaster(ctx.channel(), SlaveNodeServer.masterChannel, election.getTerm(), election.getIndex());
+            SlaveNodeServer.masterChannel = ctx.channel();
+            ElectionUtil.handleTypeMaster(ctx.channel(), election.getTerm(), election.getIndex());
 
         } else if (type == Consts.MSG_TYPE_HEARTBEAT) {
             // 保存slave的地址

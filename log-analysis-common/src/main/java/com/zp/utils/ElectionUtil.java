@@ -13,12 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ElectionUtil {
     public static void handleTypeMaster(Channel channel,
-                                        Channel masterChannel,
                                         int term,
                                         int index) {
         // 更新master信息
         log.info("更新master node 为" + channel.remoteAddress());
-        masterChannel = channel;
         // 更新term
         Election.term = term;
         if (Election.index < index) {
