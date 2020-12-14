@@ -31,6 +31,15 @@ public class FileUtil {
         }
     }
 
+    public static void writeOverride(File file, ByteString byteString) {
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            fileOutputStream.write(byteString.toByteArray());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void write(File file, ByteBuf byteBuf) {
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(file, true);

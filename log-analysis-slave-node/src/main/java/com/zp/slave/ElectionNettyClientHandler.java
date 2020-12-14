@@ -1,5 +1,6 @@
 package com.zp.slave;
 
+import com.google.protobuf.ByteString;
 import com.zp.constrants.Consts;
 import com.zp.entity.Election;
 import com.zp.entity.ProjectMsg;
@@ -83,6 +84,17 @@ public class ElectionNettyClientHandler extends ChannelInboundHandlerAdapter {
                     .setIndexMap(FileUtil.convertFileToByteString(new File(Consts.FILE_NAME_PROJECT_MSG_MAP)))
                     .setContent(FileUtil.read(new File(projectId + ".log"), from, bytes));
             ctx.channel().writeAndFlush(msgSend);
+        }  else if (type == Consts.MSG_TYPE_LOG_COPY_DATA) {
+            ByteString indexMap = election.getIndexMap();
+            ByteString msgMap = election.getMsgMap();
+            String projectId = election.getProjectId();
+            String content = election.getContent();
+            // 覆盖indexMap文件
+            FileUtil.writeOverride(new File(Consts.FILE_NAME_MSG_INDEX_MAP), indexMap);
+            // 覆盖msgMap文件
+            FileUtil.writeOverride(new File(Consts.FILE_NAME_PROJECT_MSG_MAP), msgMap);
+            // 追加写入日志文件
+            FileUtil.write(new File(projectId + ".log"), content);
         }
     }
 }
