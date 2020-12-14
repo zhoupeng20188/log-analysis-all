@@ -15,9 +15,7 @@ import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -29,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 public class SlaveNodeServer {
     public static volatile Channel masterChannel;
     public static volatile String otherSlaveAddrs;
-    public static volatile List<Channel> slaveChannels = new ArrayList<>();
+    public static volatile Set<Channel> slaveClientChannels = new HashSet<>();
     public static volatile HashMap<Integer, Channel> slaveChannelMap = new HashMap<>();
     private int slaveId;
     private String serverAddr;
@@ -75,7 +73,7 @@ public class SlaveNodeServer {
         this.serverPort = serverPort;
     }
 
-    public void start(){
+    public void start() {
         // 启动时加载index到内存中
         MsgUtil.initIndex();
         startNettyClient();
@@ -88,13 +86,15 @@ public class SlaveNodeServer {
                 .scheduleAtFixedRate(new Runnable() {
                     @Override
                     public void run() {
-                        MsgPOJO.Msg.Builder msgSend = MsgPOJO.Msg.newBuilder()
-                                .setType(Consts.MSG_TYPE_HEARTBEAT)
-                                .setPort(port);
-                        masterChannel.writeAndFlush(msgSend);
-                        log.info("send heartbeat to master node：" + masterChannel.remoteAddress());
+                        if (!Election.isLeader) {
+                            MsgPOJO.Msg.Builder msgSend = MsgPOJO.Msg.newBuilder()
+                                    .setType(Consts.MSG_TYPE_HEARTBEAT)
+                                    .setPort(port);
+                            masterChannel.writeAndFlush(msgSend);
+                            log.info("send heartbeat to master node：" + masterChannel.remoteAddress());
+                        }
                     }
-                },10, 10, TimeUnit.SECONDS);
+                }, 10, 10, TimeUnit.SECONDS);
     }
 
     public void startNettyClient() {

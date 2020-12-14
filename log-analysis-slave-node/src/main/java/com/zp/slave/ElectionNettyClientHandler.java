@@ -15,7 +15,7 @@ public class ElectionNettyClientHandler extends ChannelInboundHandlerAdapter {
                 .setType(Consts.MSG_TYPE_ELECTION)
                 .setTerm(Election.term)
                 .setElectionId(Election.id);
-        SlaveNodeServer.slaveChannels.add(ctx.channel());
+        SlaveNodeServer.slaveClientChannels.add(ctx.channel());
         ctx.channel().writeAndFlush(msgSend);
     }
 
@@ -31,18 +31,24 @@ public class ElectionNettyClientHandler extends ChannelInboundHandlerAdapter {
                 Election.isLeader = true;
                 // 纪元+1
                 Election.term++;
-                log.info("slave：" + Election.port + "成为 master!");
+                log.info("slave：" + Election.port + "成为 master! term = " + Election.term);
                 // 向其它slave发送成为master的消息
-                for (Channel slaveChannel : SlaveNodeServer.slaveChannels) {
+                log.info("slaveClientChannels size = " + SlaveNodeServer.slaveClientChannels.size());
+                for (Channel slaveChannel : SlaveNodeServer.slaveClientChannels) {
                     ElectionPOJO.Election.Builder msgSend = ElectionPOJO.Election.newBuilder()
                             .setType(Consts.MSG_TYPE_ELECTION_MASTER)
                             .setTerm(Election.term)
                             .setElectionId(Election.id);
+                    log.info("向slave：" + slaveChannel.remoteAddress() + "发送成为master的消息");
                     slaveChannel.writeAndFlush(msgSend);
                 }
-
-
             }
+        } else if (type == Consts.MSG_TYPE_ELECTION_MASTER) {
+            // 更新master信息
+            log.info("更新master node 为" + ctx.channel().remoteAddress());
+            SlaveNodeServer.masterChannel = ctx.channel();
+        } else if (type == Consts.MSG_TYPE_HEARTBEAT) {
+            log.info("接收到heart beat");
         }
     }
 }

@@ -8,6 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ElectionNettyServerHandler extends ChannelInboundHandlerAdapter {
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        SlaveNodeServer.slaveClientChannels.add(ctx.channel());
+    }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -34,7 +38,10 @@ public class ElectionNettyServerHandler extends ChannelInboundHandlerAdapter {
 
         } else if (type == Consts.MSG_TYPE_ELECTION_MASTER) {
             // 更新master信息
+            log.info("更新master node 为" + ctx.channel().remoteAddress());
             SlaveNodeServer.masterChannel = ctx.channel();
+        } else if (type == Consts.MSG_TYPE_HEARTBEAT) {
+            log.info("接收到heart beat");
         }
     }
 }
