@@ -87,7 +87,7 @@ public class MsgUtil {
         try {
             FileInputStream fis = null;
             ObjectInputStream ois = null;
-            File file = new File("msgIndexMap.log");
+            File file = new File(Consts.FILE_NAME_MSG_INDEX_MAP);
             if (!file.exists()) {
                 file.createNewFile();
             } else if (file.length() > 0) {
@@ -96,7 +96,7 @@ public class MsgUtil {
                 MetaData.msgIndexMap = (ConcurrentHashMap<Long, Integer>) ois.readObject();
             }
 
-            file = new File("projectMsgMap.log");
+            file = new File(Consts.FILE_NAME_PROJECT_MSG_MAP);
             if (!file.exists()) {
                 file.createNewFile();
             } else if (file.length() > 0) {
@@ -112,23 +112,23 @@ public class MsgUtil {
         }
     }
 
-     public static void sendHeartbeatAck(ChannelHandlerContext ctx,
-                                         List<String> slaveServerList,
-                                         int port){
-         // 发送heartbeat的ack，包括所有slave server的地址
-         String remoteAddress = "";
-         for (String s : slaveServerList) {
-             if (!s.contains(String.valueOf(port))) {
-                 // 返回不包含自己的其它slave的地址
-                 remoteAddress += s + ",";
-             }
-         }
-         if (!StringUtil.isEmpty(remoteAddress)) {
-             remoteAddress = remoteAddress.substring(0, remoteAddress.length() - 1);
-         }
-         MsgPOJO.Msg.Builder msgSend = MsgPOJO.Msg.newBuilder()
-                 .setType(Consts.MSG_TYPE_HEARTBEAT_ACK)
-                 .setContent(remoteAddress);
-         ctx.channel().writeAndFlush(msgSend);
-     }
+    public static void sendHeartbeatAck(ChannelHandlerContext ctx,
+                                        List<String> slaveServerList,
+                                        int port) {
+        // 发送heartbeat的ack，包括所有slave server的地址
+        String remoteAddress = "";
+        for (String s : slaveServerList) {
+            if (!s.contains(String.valueOf(port))) {
+                // 返回不包含自己的其它slave的地址
+                remoteAddress += s + ",";
+            }
+        }
+        if (!StringUtil.isEmpty(remoteAddress)) {
+            remoteAddress = remoteAddress.substring(0, remoteAddress.length() - 1);
+        }
+        MsgPOJO.Msg.Builder msgSend = MsgPOJO.Msg.newBuilder()
+                .setType(Consts.MSG_TYPE_HEARTBEAT_ACK)
+                .setContent(remoteAddress);
+        ctx.channel().writeAndFlush(msgSend);
+    }
 }

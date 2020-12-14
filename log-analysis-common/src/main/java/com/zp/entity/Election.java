@@ -1,4 +1,4 @@
-package com.zp.slave;
+package com.zp.entity;
 
 public class Election {
     /**

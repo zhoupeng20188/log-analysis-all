@@ -1,6 +1,7 @@
 package com.zp.slave;
 
 import com.zp.constrants.Consts;
+import com.zp.entity.Election;
 import com.zp.protobuf.ElectionPOJO;
 import com.zp.protobuf.MsgPOJO;
 import com.zp.utils.MsgUtil;

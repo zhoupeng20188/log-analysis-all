@@ -1,5 +1,6 @@
 package com.zp.utils;
 
+import com.google.protobuf.ByteString;
 import io.netty.buffer.ByteBuf;
 
 import java.io.File;
@@ -41,17 +42,34 @@ public class FileUtil {
         }
     }
 
-    public static String read(File file, int bytes) {
+    public static String read(File file, int start, int bytes) {
         try {
             FileInputStream fileInputStream = new FileInputStream(file);
             byte[] buffer = new byte[bytes];
-            fileInputStream.read(buffer, 0, bytes);
+            fileInputStream.read(buffer, start, bytes);
             return new String(buffer);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
-
     }
 
+    public static byte[] convertFileToByteArray(File file) {
+        try {
+            FileInputStream fileInputStream = new FileInputStream(file);
+            int bytes = (int) file.length();
+            byte[] buffer = new byte[(int) file.length()];
+            fileInputStream.read(buffer, 0, bytes);
+            return buffer;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    public static ByteString convertFileToByteString(File file) {
+        return ByteString.copyFrom(convertFileToByteArray(file));
+
+    }
 }

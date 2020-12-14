@@ -1,9 +1,11 @@
 package com.zp.slave;
 
 import com.zp.constrants.Consts;
+import com.zp.entity.Election;
 import com.zp.protobuf.ElectionPOJO;
 import com.zp.protobuf.MsgPOJO;
 import com.zp.utils.ChannelUtil;
+import com.zp.utils.ElectionUtil;
 import com.zp.utils.MsgUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -44,8 +46,8 @@ public class ElectionNettyServerHandler extends ChannelInboundHandlerAdapter {
 
         } else if (type == Consts.MSG_TYPE_ELECTION_MASTER) {
             // 更新master信息
-            log.info("更新master node 为" + ctx.channel().remoteAddress());
-            SlaveNodeServer.masterChannel = ctx.channel();
+            ElectionUtil.handleTypeMaster(ctx.channel(), SlaveNodeServer.masterChannel, election.getTerm(), election.getIndex());
+
         } else if (type == Consts.MSG_TYPE_HEARTBEAT) {
             // 保存slave的地址
             ChannelUtil.storeSlaveAddress(ctx.channel(), SlaveNodeServer.slaveServerList, election.getPort());

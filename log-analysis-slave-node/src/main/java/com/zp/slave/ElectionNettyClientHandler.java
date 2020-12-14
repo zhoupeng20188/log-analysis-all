@@ -1,14 +1,21 @@
 package com.zp.slave;
 
 import com.zp.constrants.Consts;
+import com.zp.entity.Election;
+import com.zp.entity.ProjectMsg;
+import com.zp.meta.MetaData;
 import com.zp.protobuf.ElectionPOJO;
 import com.zp.protobuf.MsgPOJO;
 import com.zp.utils.ChannelUtil;
+import com.zp.utils.FileUtil;
 import com.zp.utils.MsgUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.File;
+import java.util.List;
 
 @Slf4j
 public class ElectionNettyClientHandler extends ChannelInboundHandlerAdapter {
@@ -58,6 +65,24 @@ public class ElectionNettyClientHandler extends ChannelInboundHandlerAdapter {
         } else if (type == Consts.MSG_TYPE_HEARTBEAT_ACK) {
             log.info("接收到最新的slave集群地址：" + election.getContent());
             SlaveNodeServer.otherSlaveAddrs = election.getContent();
+        } else if (type == Consts.MSG_TYPE_LOG_INDEX_COPY_REQUEST_ACK) {
+            String projectId = election.getProjectId();
+            int index = election.getIndex();
+            ProjectMsg projectMsg = MetaData.projectMsgMap.get(projectId);
+            List<Integer> msgIndexList = projectMsg.getMsgIndexList();
+            // 消息起始位置
+            int from = msgIndexList.get(index);
+            int indexNow = Election.index;
+            // 消息最后位置
+            int last = msgIndexList.get(indexNow);
+            int bytes = last - from;
+            ElectionPOJO.Election.Builder msgSend = ElectionPOJO.Election.newBuilder()
+                    .setType(Consts.MSG_TYPE_LOG_COPY_DATA)
+                    .setIndex(Election.index)
+                    .setIndexMap(FileUtil.convertFileToByteString(new File(Consts.FILE_NAME_MSG_INDEX_MAP)))
+                    .setIndexMap(FileUtil.convertFileToByteString(new File(Consts.FILE_NAME_PROJECT_MSG_MAP)))
+                    .setContent(FileUtil.read(new File(projectId + ".log"), from, bytes));
+            ctx.channel().writeAndFlush(msgSend);
         }
     }
 }

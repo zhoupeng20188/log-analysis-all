@@ -9,4 +9,7 @@ message Election { // 会在ElectionPOJO外部类中生成一个Election内部�
     int32 voteResult =5; // 投票结果，1：通过，0：不通过
     int32 port =6; // 正在连接的客户端的server端口
     string content =7; // 内容
+    string projectId = 8;
+    bytes indexMap = 9;
+    bytes msgMap = 10;
 }

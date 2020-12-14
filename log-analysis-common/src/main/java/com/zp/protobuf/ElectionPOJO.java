@@ -95,6 +95,30 @@ public final class ElectionPOJO {
      */
     com.google.protobuf.ByteString
         getContentBytes();
+
+    /**
+     * <code>string projectId = 8;</code>
+     * @return The projectId.
+     */
+    String getProjectId();
+    /**
+     * <code>string projectId = 8;</code>
+     * @return The bytes for projectId.
+     */
+    com.google.protobuf.ByteString
+        getProjectIdBytes();
+
+    /**
+     * <code>bytes indexMap = 9;</code>
+     * @return The indexMap.
+     */
+    com.google.protobuf.ByteString getIndexMap();
+
+    /**
+     * <code>bytes msgMap = 10;</code>
+     * @return The msgMap.
+     */
+    com.google.protobuf.ByteString getMsgMap();
   }
   /**
    * <pre>
@@ -114,6 +138,9 @@ public final class ElectionPOJO {
     }
     private Election() {
       content_ = "";
+      projectId_ = "";
+      indexMap_ = com.google.protobuf.ByteString.EMPTY;
+      msgMap_ = com.google.protobuf.ByteString.EMPTY;
     }
 
     @Override
@@ -180,6 +207,22 @@ public final class ElectionPOJO {
               String s = input.readStringRequireUtf8();
 
               content_ = s;
+              break;
+            }
+            case 66: {
+              String s = input.readStringRequireUtf8();
+
+              projectId_ = s;
+              break;
+            }
+            case 74: {
+
+              indexMap_ = input.readBytes();
+              break;
+            }
+            case 82: {
+
+              msgMap_ = input.readBytes();
               break;
             }
             default: {
@@ -350,6 +393,66 @@ public final class ElectionPOJO {
       }
     }
 
+    public static final int PROJECTID_FIELD_NUMBER = 8;
+    private volatile Object projectId_;
+    /**
+     * <code>string projectId = 8;</code>
+     * @return The projectId.
+     */
+    @Override
+    public String getProjectId() {
+      Object ref = projectId_;
+      if (ref instanceof String) {
+        return (String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        String s = bs.toStringUtf8();
+        projectId_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string projectId = 8;</code>
+     * @return The bytes for projectId.
+     */
+    @Override
+    public com.google.protobuf.ByteString
+        getProjectIdBytes() {
+      Object ref = projectId_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (String) ref);
+        projectId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int INDEXMAP_FIELD_NUMBER = 9;
+    private com.google.protobuf.ByteString indexMap_;
+    /**
+     * <code>bytes indexMap = 9;</code>
+     * @return The indexMap.
+     */
+    @Override
+    public com.google.protobuf.ByteString getIndexMap() {
+      return indexMap_;
+    }
+
+    public static final int MSGMAP_FIELD_NUMBER = 10;
+    private com.google.protobuf.ByteString msgMap_;
+    /**
+     * <code>bytes msgMap = 10;</code>
+     * @return The msgMap.
+     */
+    @Override
+    public com.google.protobuf.ByteString getMsgMap() {
+      return msgMap_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @Override
     public final boolean isInitialized() {
@@ -384,6 +487,15 @@ public final class ElectionPOJO {
       }
       if (!getContentBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 7, content_);
+      }
+      if (!getProjectIdBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 8, projectId_);
+      }
+      if (!indexMap_.isEmpty()) {
+        output.writeBytes(9, indexMap_);
+      }
+      if (!msgMap_.isEmpty()) {
+        output.writeBytes(10, msgMap_);
       }
       unknownFields.writeTo(output);
     }
@@ -421,6 +533,17 @@ public final class ElectionPOJO {
       if (!getContentBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, content_);
       }
+      if (!getProjectIdBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, projectId_);
+      }
+      if (!indexMap_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(9, indexMap_);
+      }
+      if (!msgMap_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(10, msgMap_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -450,6 +573,12 @@ public final class ElectionPOJO {
           != other.getPort()) return false;
       if (!getContent()
           .equals(other.getContent())) return false;
+      if (!getProjectId()
+          .equals(other.getProjectId())) return false;
+      if (!getIndexMap()
+          .equals(other.getIndexMap())) return false;
+      if (!getMsgMap()
+          .equals(other.getMsgMap())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -475,6 +604,12 @@ public final class ElectionPOJO {
       hash = (53 * hash) + getPort();
       hash = (37 * hash) + CONTENT_FIELD_NUMBER;
       hash = (53 * hash) + getContent().hashCode();
+      hash = (37 * hash) + PROJECTID_FIELD_NUMBER;
+      hash = (53 * hash) + getProjectId().hashCode();
+      hash = (37 * hash) + INDEXMAP_FIELD_NUMBER;
+      hash = (53 * hash) + getIndexMap().hashCode();
+      hash = (37 * hash) + MSGMAP_FIELD_NUMBER;
+      hash = (53 * hash) + getMsgMap().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -626,6 +761,12 @@ public final class ElectionPOJO {
 
         content_ = "";
 
+        projectId_ = "";
+
+        indexMap_ = com.google.protobuf.ByteString.EMPTY;
+
+        msgMap_ = com.google.protobuf.ByteString.EMPTY;
+
         return this;
       }
 
@@ -659,6 +800,9 @@ public final class ElectionPOJO {
         result.voteResult_ = voteResult_;
         result.port_ = port_;
         result.content_ = content_;
+        result.projectId_ = projectId_;
+        result.indexMap_ = indexMap_;
+        result.msgMap_ = msgMap_;
         onBuilt();
         return result;
       }
@@ -728,6 +872,16 @@ public final class ElectionPOJO {
         if (!other.getContent().isEmpty()) {
           content_ = other.content_;
           onChanged();
+        }
+        if (!other.getProjectId().isEmpty()) {
+          projectId_ = other.projectId_;
+          onChanged();
+        }
+        if (other.getIndexMap() != com.google.protobuf.ByteString.EMPTY) {
+          setIndexMap(other.getIndexMap());
+        }
+        if (other.getMsgMap() != com.google.protobuf.ByteString.EMPTY) {
+          setMsgMap(other.getMsgMap());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -1111,6 +1265,150 @@ public final class ElectionPOJO {
         onChanged();
         return this;
       }
+
+      private Object projectId_ = "";
+      /**
+       * <code>string projectId = 8;</code>
+       * @return The projectId.
+       */
+      public String getProjectId() {
+        Object ref = projectId_;
+        if (!(ref instanceof String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          String s = bs.toStringUtf8();
+          projectId_ = s;
+          return s;
+        } else {
+          return (String) ref;
+        }
+      }
+      /**
+       * <code>string projectId = 8;</code>
+       * @return The bytes for projectId.
+       */
+      public com.google.protobuf.ByteString
+          getProjectIdBytes() {
+        Object ref = projectId_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (String) ref);
+          projectId_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string projectId = 8;</code>
+       * @param value The projectId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setProjectId(
+          String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        projectId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string projectId = 8;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearProjectId() {
+        
+        projectId_ = getDefaultInstance().getProjectId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string projectId = 8;</code>
+       * @param value The bytes for projectId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setProjectIdBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        projectId_ = value;
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.ByteString indexMap_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <code>bytes indexMap = 9;</code>
+       * @return The indexMap.
+       */
+      @Override
+      public com.google.protobuf.ByteString getIndexMap() {
+        return indexMap_;
+      }
+      /**
+       * <code>bytes indexMap = 9;</code>
+       * @param value The indexMap to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIndexMap(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        indexMap_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bytes indexMap = 9;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearIndexMap() {
+        
+        indexMap_ = getDefaultInstance().getIndexMap();
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.ByteString msgMap_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <code>bytes msgMap = 10;</code>
+       * @return The msgMap.
+       */
+      @Override
+      public com.google.protobuf.ByteString getMsgMap() {
+        return msgMap_;
+      }
+      /**
+       * <code>bytes msgMap = 10;</code>
+       * @param value The msgMap to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMsgMap(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        msgMap_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bytes msgMap = 10;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearMsgMap() {
+        
+        msgMap_ = getDefaultInstance().getMsgMap();
+        onChanged();
+        return this;
+      }
       @Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -1178,11 +1476,12 @@ public final class ElectionPOJO {
       descriptor;
   static {
     String[] descriptorData = {
-      "\n\016Election.proto\"|\n\010Election\022\014\n\004term\030\001 \001" +
-      "(\005\022\014\n\004type\030\002 \001(\005\022\r\n\005index\030\003 \001(\005\022\022\n\nElect" +
-      "ionId\030\004 \001(\005\022\022\n\nvoteResult\030\005 \001(\005\022\014\n\004port\030" +
-      "\006 \001(\005\022\017\n\007content\030\007 \001(\tB\016B\014ElectionPOJOb\006" +
-      "proto3"
+      "\n\016Election.proto\"\261\001\n\010Election\022\014\n\004term\030\001 " +
+      "\001(\005\022\014\n\004type\030\002 \001(\005\022\r\n\005index\030\003 \001(\005\022\022\n\nElec" +
+      "tionId\030\004 \001(\005\022\022\n\nvoteResult\030\005 \001(\005\022\014\n\004port" +
+      "\030\006 \001(\005\022\017\n\007content\030\007 \001(\t\022\021\n\tprojectId\030\010 \001" +
+      "(\t\022\020\n\010indexMap\030\t \001(\014\022\016\n\006msgMap\030\n \001(\014B\016B\014" +
+      "ElectionPOJOb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -1193,7 +1492,7 @@ public final class ElectionPOJO {
     internal_static_Election_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_Election_descriptor,
-        new String[] { "Term", "Type", "Index", "ElectionId", "VoteResult", "Port", "Content", });
+        new String[] { "Term", "Type", "Index", "ElectionId", "VoteResult", "Port", "Content", "ProjectId", "IndexMap", "MsgMap", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)
