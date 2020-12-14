@@ -2,15 +2,21 @@ package com.zp.slave;
 
 import com.zp.constrants.Consts;
 import com.zp.protobuf.ElectionPOJO;
+import com.zp.protobuf.MsgPOJO;
+import com.zp.utils.ChannelUtil;
+import com.zp.utils.MsgUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
+
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 
 @Slf4j
 public class ElectionNettyServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        SlaveNodeServer.slaveClientChannels.add(ctx.channel());
+        ChannelUtil.storeChannel(SlaveNodeServer.slaveClientChannels, SlaveNodeServer.slaveChannelMap, ctx.channel());
     }
 
     @Override
@@ -41,7 +47,13 @@ public class ElectionNettyServerHandler extends ChannelInboundHandlerAdapter {
             log.info("更新master node 为" + ctx.channel().remoteAddress());
             SlaveNodeServer.masterChannel = ctx.channel();
         } else if (type == Consts.MSG_TYPE_HEARTBEAT) {
-            log.info("接收到heart beat");
+            // 保存slave的地址
+            ChannelUtil.storeSlaveAddress(ctx.channel(), SlaveNodeServer.slaveServerList, election.getPort());
+            // 发送heartbeat的ack，包括所有slave server的地址
+            MsgUtil.sendHeartbeatAck(ctx, SlaveNodeServer.slaveServerList, election.getPort());
+        } else if (type == Consts.MSG_TYPE_HEARTBEAT_ACK) {
+            log.info("接收到最新的slave集群地址：" + election.getContent());
+            SlaveNodeServer.otherSlaveAddrs = election.getContent();
         }
     }
 }

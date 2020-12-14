@@ -28,7 +28,8 @@ public class SlaveNodeServer {
     public static volatile Channel masterChannel;
     public static volatile String otherSlaveAddrs;
     public static volatile Set<Channel> slaveClientChannels = new HashSet<>();
-    public static volatile HashMap<Integer, Channel> slaveChannelMap = new HashMap<>();
+    public static volatile HashMap<String, Channel> slaveChannelMap = new HashMap<>();
+    public static volatile List<String> slaveServerList = new ArrayList<>();
     private int slaveId;
     private String serverAddr;
     private int serverPort;

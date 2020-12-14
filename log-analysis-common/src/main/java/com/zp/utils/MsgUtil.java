@@ -1,7 +1,10 @@
 package com.zp.utils;
 
+import com.zp.constrants.Consts;
 import com.zp.entity.ProjectMsg;
 import com.zp.meta.MetaData;
+import com.zp.protobuf.MsgPOJO;
+import io.netty.channel.ChannelHandlerContext;
 
 import java.io.*;
 import java.util.List;
@@ -108,4 +111,24 @@ public class MsgUtil {
             e.printStackTrace();
         }
     }
+
+     public static void sendHeartbeatAck(ChannelHandlerContext ctx,
+                                         List<String> slaveServerList,
+                                         int port){
+         // 发送heartbeat的ack，包括所有slave server的地址
+         String remoteAddress = "";
+         for (String s : slaveServerList) {
+             if (!s.contains(String.valueOf(port))) {
+                 // 返回不包含自己的其它slave的地址
+                 remoteAddress += s + ",";
+             }
+         }
+         if (!StringUtil.isEmpty(remoteAddress)) {
+             remoteAddress = remoteAddress.substring(0, remoteAddress.length() - 1);
+         }
+         MsgPOJO.Msg.Builder msgSend = MsgPOJO.Msg.newBuilder()
+                 .setType(Consts.MSG_TYPE_HEARTBEAT_ACK)
+                 .setContent(remoteAddress);
+         ctx.channel().writeAndFlush(msgSend);
+     }
 }

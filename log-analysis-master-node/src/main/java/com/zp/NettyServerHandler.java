@@ -2,6 +2,7 @@ package com.zp;
 
 import com.zp.constrants.Consts;
 import com.zp.protobuf.MsgPOJO;
+import com.zp.utils.ChannelUtil;
 import com.zp.utils.MsgUtil;
 import com.zp.utils.StringUtil;
 import io.netty.channel.Channel;
@@ -54,32 +55,12 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         MsgPOJO.Msg.Builder msgSend = null;
         if (msgType == Consts.MSG_TYPE_HEARTBEAT) {
             // 发送heartbeat的ack，包括所有slave server的地址
-            String remoteAddress = "";
-            int port = msgRsrv.getPort();
-            for (String s : slaveServerList) {
-                if (!s.contains(String.valueOf(port))) {
-                    // 返回不包含自己的其它slave的地址
-                    remoteAddress += s + ",";
-                }
-            }
-            if (!StringUtil.isEmpty(remoteAddress)) {
-                remoteAddress = remoteAddress.substring(0, remoteAddress.length() - 1);
-            }
-            msgSend = builder
-                    .setMsgId(msgId)
-                    .setProjectId(projectId)
-                    .setType(Consts.MSG_TYPE_HEARTBEAT_ACK)
-                    .setContent(remoteAddress);
-            ctx.channel().writeAndFlush(msgSend);
+            MsgUtil.sendHeartbeatAck(ctx, slaveServerList, msgRsrv.getPort());
         } else if (msgType == Consts.MSG_TYPE_ACTIVE_SLAVE) {
             log.info("slave：" + ctx.channel().remoteAddress() + " is connected");
             channelGroup.add(ctx.channel());
-            // 获取当前连接的客户端的ip
-            InetSocketAddress inetSocketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
-            String ip = inetSocketAddress.getAddress().getHostAddress();
-            int port = msgRsrv.getPort();
-            String address = ip + ":" + port;
-            slaveServerList.add(address);
+            // 保存slave的地址
+            ChannelUtil.storeSlaveAddress(ctx.channel(), slaveServerList, msgRsrv.getPort());
         } else if (msgType == Consts.MSG_TYPE_UNCOMMITED_ACK) {
             log.info("接收到slave：" + ctx.channel().remoteAddress() + "的ack");
             int ackCnt = 0;

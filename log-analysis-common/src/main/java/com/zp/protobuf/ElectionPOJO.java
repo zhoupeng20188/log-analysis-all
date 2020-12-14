@@ -65,6 +65,36 @@ public final class ElectionPOJO {
      * @return The voteResult.
      */
     int getVoteResult();
+
+    /**
+     * <pre>
+     * 正在连接的客户端的server端口
+     * </pre>
+     *
+     * <code>int32 port = 6;</code>
+     * @return The port.
+     */
+    int getPort();
+
+    /**
+     * <pre>
+     * 内容
+     * </pre>
+     *
+     * <code>string content = 7;</code>
+     * @return The content.
+     */
+    String getContent();
+    /**
+     * <pre>
+     * 内容
+     * </pre>
+     *
+     * <code>string content = 7;</code>
+     * @return The bytes for content.
+     */
+    com.google.protobuf.ByteString
+        getContentBytes();
   }
   /**
    * <pre>
@@ -83,6 +113,7 @@ public final class ElectionPOJO {
       super(builder);
     }
     private Election() {
+      content_ = "";
     }
 
     @Override
@@ -138,6 +169,17 @@ public final class ElectionPOJO {
             case 40: {
 
               voteResult_ = input.readInt32();
+              break;
+            }
+            case 48: {
+
+              port_ = input.readInt32();
+              break;
+            }
+            case 58: {
+              String s = input.readStringRequireUtf8();
+
+              content_ = s;
               break;
             }
             default: {
@@ -247,6 +289,67 @@ public final class ElectionPOJO {
       return voteResult_;
     }
 
+    public static final int PORT_FIELD_NUMBER = 6;
+    private int port_;
+    /**
+     * <pre>
+     * 正在连接的客户端的server端口
+     * </pre>
+     *
+     * <code>int32 port = 6;</code>
+     * @return The port.
+     */
+    @Override
+    public int getPort() {
+      return port_;
+    }
+
+    public static final int CONTENT_FIELD_NUMBER = 7;
+    private volatile Object content_;
+    /**
+     * <pre>
+     * 内容
+     * </pre>
+     *
+     * <code>string content = 7;</code>
+     * @return The content.
+     */
+    @Override
+    public String getContent() {
+      Object ref = content_;
+      if (ref instanceof String) {
+        return (String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        String s = bs.toStringUtf8();
+        content_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 内容
+     * </pre>
+     *
+     * <code>string content = 7;</code>
+     * @return The bytes for content.
+     */
+    @Override
+    public com.google.protobuf.ByteString
+        getContentBytes() {
+      Object ref = content_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (String) ref);
+        content_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     @Override
     public final boolean isInitialized() {
@@ -275,6 +378,12 @@ public final class ElectionPOJO {
       }
       if (voteResult_ != 0) {
         output.writeInt32(5, voteResult_);
+      }
+      if (port_ != 0) {
+        output.writeInt32(6, port_);
+      }
+      if (!getContentBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, content_);
       }
       unknownFields.writeTo(output);
     }
@@ -305,6 +414,13 @@ public final class ElectionPOJO {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(5, voteResult_);
       }
+      if (port_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(6, port_);
+      }
+      if (!getContentBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, content_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -330,6 +446,10 @@ public final class ElectionPOJO {
           != other.getElectionId()) return false;
       if (getVoteResult()
           != other.getVoteResult()) return false;
+      if (getPort()
+          != other.getPort()) return false;
+      if (!getContent()
+          .equals(other.getContent())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -351,6 +471,10 @@ public final class ElectionPOJO {
       hash = (53 * hash) + getElectionId();
       hash = (37 * hash) + VOTERESULT_FIELD_NUMBER;
       hash = (53 * hash) + getVoteResult();
+      hash = (37 * hash) + PORT_FIELD_NUMBER;
+      hash = (53 * hash) + getPort();
+      hash = (37 * hash) + CONTENT_FIELD_NUMBER;
+      hash = (53 * hash) + getContent().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -498,6 +622,10 @@ public final class ElectionPOJO {
 
         voteResult_ = 0;
 
+        port_ = 0;
+
+        content_ = "";
+
         return this;
       }
 
@@ -529,6 +657,8 @@ public final class ElectionPOJO {
         result.index_ = index_;
         result.electionId_ = electionId_;
         result.voteResult_ = voteResult_;
+        result.port_ = port_;
+        result.content_ = content_;
         onBuilt();
         return result;
       }
@@ -591,6 +721,13 @@ public final class ElectionPOJO {
         }
         if (other.getVoteResult() != 0) {
           setVoteResult(other.getVoteResult());
+        }
+        if (other.getPort() != 0) {
+          setPort(other.getPort());
+        }
+        if (!other.getContent().isEmpty()) {
+          content_ = other.content_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -835,6 +972,145 @@ public final class ElectionPOJO {
         onChanged();
         return this;
       }
+
+      private int port_ ;
+      /**
+       * <pre>
+       * 正在连接的客户端的server端口
+       * </pre>
+       *
+       * <code>int32 port = 6;</code>
+       * @return The port.
+       */
+      @Override
+      public int getPort() {
+        return port_;
+      }
+      /**
+       * <pre>
+       * 正在连接的客户端的server端口
+       * </pre>
+       *
+       * <code>int32 port = 6;</code>
+       * @param value The port to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPort(int value) {
+        
+        port_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 正在连接的客户端的server端口
+       * </pre>
+       *
+       * <code>int32 port = 6;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearPort() {
+        
+        port_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private Object content_ = "";
+      /**
+       * <pre>
+       * 内容
+       * </pre>
+       *
+       * <code>string content = 7;</code>
+       * @return The content.
+       */
+      public String getContent() {
+        Object ref = content_;
+        if (!(ref instanceof String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          String s = bs.toStringUtf8();
+          content_ = s;
+          return s;
+        } else {
+          return (String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 内容
+       * </pre>
+       *
+       * <code>string content = 7;</code>
+       * @return The bytes for content.
+       */
+      public com.google.protobuf.ByteString
+          getContentBytes() {
+        Object ref = content_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (String) ref);
+          content_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 内容
+       * </pre>
+       *
+       * <code>string content = 7;</code>
+       * @param value The content to set.
+       * @return This builder for chaining.
+       */
+      public Builder setContent(
+          String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        content_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 内容
+       * </pre>
+       *
+       * <code>string content = 7;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearContent() {
+        
+        content_ = getDefaultInstance().getContent();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 内容
+       * </pre>
+       *
+       * <code>string content = 7;</code>
+       * @param value The bytes for content to set.
+       * @return This builder for chaining.
+       */
+      public Builder setContentBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        content_ = value;
+        onChanged();
+        return this;
+      }
       @Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -902,10 +1178,11 @@ public final class ElectionPOJO {
       descriptor;
   static {
     String[] descriptorData = {
-      "\n\016Election.proto\"]\n\010Election\022\014\n\004term\030\001 \001" +
+      "\n\016Election.proto\"|\n\010Election\022\014\n\004term\030\001 \001" +
       "(\005\022\014\n\004type\030\002 \001(\005\022\r\n\005index\030\003 \001(\005\022\022\n\nElect" +
-      "ionId\030\004 \001(\005\022\022\n\nvoteResult\030\005 \001(\005B\016B\014Elect" +
-      "ionPOJOb\006proto3"
+      "ionId\030\004 \001(\005\022\022\n\nvoteResult\030\005 \001(\005\022\014\n\004port\030" +
+      "\006 \001(\005\022\017\n\007content\030\007 \001(\tB\016B\014ElectionPOJOb\006" +
+      "proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -916,7 +1193,7 @@ public final class ElectionPOJO {
     internal_static_Election_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_Election_descriptor,
-        new String[] { "Term", "Type", "Index", "ElectionId", "VoteResult", });
+        new String[] { "Term", "Type", "Index", "ElectionId", "VoteResult", "Port", "Content", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)
