@@ -3,6 +3,7 @@ package com.zp;
 import com.zp.constrants.Consts;
 import com.zp.protobuf.MsgPOJO;
 import com.zp.utils.MsgUtil;
+import com.zp.utils.StringUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -56,12 +57,14 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
             String remoteAddress = "";
             int port = msgRsrv.getPort();
             for (String s : slaveServerList) {
-                if(!s.contains(String.valueOf(port))) {
+                if (!s.contains(String.valueOf(port))) {
                     // 返回不包含自己的其它slave的地址
                     remoteAddress += s + ",";
                 }
             }
-            remoteAddress =  remoteAddress.substring(0, remoteAddress.length() -1);
+            if (!StringUtil.isEmpty(remoteAddress)) {
+                remoteAddress = remoteAddress.substring(0, remoteAddress.length() - 1);
+            }
             msgSend = builder
                     .setMsgId(msgId)
                     .setProjectId(projectId)

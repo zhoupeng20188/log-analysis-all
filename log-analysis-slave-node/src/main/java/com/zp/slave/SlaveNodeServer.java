@@ -13,10 +13,11 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -26,7 +27,10 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class SlaveNodeServer {
-    private Channel channel;
+    public static volatile Channel masterChannel;
+    public static volatile String otherSlaveAddrs;
+    public static volatile List<Channel> slaveChannels = new ArrayList<>();
+    public static volatile HashMap<Integer, Channel> slaveChannelMap = new HashMap<>();
     private int slaveId;
     private String serverAddr;
     private int serverPort;
@@ -87,8 +91,8 @@ public class SlaveNodeServer {
                         MsgPOJO.Msg.Builder msgSend = MsgPOJO.Msg.newBuilder()
                                 .setType(Consts.MSG_TYPE_HEARTBEAT)
                                 .setPort(port);
-                        channel.writeAndFlush(msgSend);
-                        log.info("send heartbeat to master node：" + channel.remoteAddress());
+                        masterChannel.writeAndFlush(msgSend);
+                        log.info("send heartbeat to master node：" + masterChannel.remoteAddress());
                     }
                 },10, 10, TimeUnit.SECONDS);
     }
@@ -111,7 +115,7 @@ public class SlaveNodeServer {
             // 客户端连接服务端
             ChannelFuture channelFuture = bootstrap.connect(serverAddr, serverPort);
 
-            channel = channelFuture.channel();
+            masterChannel = channelFuture.channel();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -137,7 +141,7 @@ public class SlaveNodeServer {
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             socketChannel.pipeline().addLast(new ProtobufEncoder());
                             socketChannel.pipeline().addLast(new ProtobufDecoder(ElectionPOJO.Election.getDefaultInstance()));
-                            socketChannel.pipeline().addLast(new ElectionNettyHandler());
+                            socketChannel.pipeline().addLast(new ElectionNettyServerHandler());
                         }
                     });
 
