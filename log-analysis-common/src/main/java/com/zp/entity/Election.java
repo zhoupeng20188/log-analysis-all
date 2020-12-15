@@ -4,15 +4,15 @@ public class Election {
     /**
      * 纪元
      */
-    public static int term;
+    public static volatile int term;
     /**
      * 选举轮次
      */
-    public static int id;
+    public static volatile int id;
     /**
      * 当前消息index
      */
-    public static int index;
+    public static volatile int index;
     /**
      * slave数量
      */
@@ -20,11 +20,11 @@ public class Election {
     /**
      * 票数
      */
-    public static int voteCnt;
+    public static volatile int voteCnt;
     /**
      * 是否为leader
      */
-    public static boolean isLeader;
+    public static volatile boolean isLeader;
     /**
      * 当前slave port
      */

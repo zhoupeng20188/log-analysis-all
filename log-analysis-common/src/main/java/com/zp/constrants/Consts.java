@@ -7,6 +7,7 @@ package com.zp.constrants;
 public class Consts {
     public static final String FILE_NAME_MSG_INDEX_MAP = "msgIndexMap.log";
     public static final String FILE_NAME_PROJECT_MSG_MAP = "projectMsgMap.log";
+    public static final String FILE_NAME_GLOBAL_COMMITED_INDEX = "globalCommitedIndex.log";
     public static final int MSG_TYPE_ACTIVE_SLAVE = 1;
     public static final int MSG_TYPE_UNCOMMITED_ACK = 2;
     public static final int MSG_TYPE_UNCOMMITED = 3;

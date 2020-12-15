@@ -33,6 +33,7 @@ public class ElectionNettyServerHandler extends ChannelInboundHandlerAdapter {
             // 消息index
             int index = election.getIndex();
             int term = election.getTerm();
+            log.info("当前term:{},index:{}", Election.term, Election.index);
             if (Election.id <= electionId
                     && Election.term <= term
                     && Election.index <= index
@@ -62,7 +63,10 @@ public class ElectionNettyServerHandler extends ChannelInboundHandlerAdapter {
             Map<String, Integer> msgMapMap = election.getMsgMapMap();
             ElectionUtil.handleTypeLogIndexCopyRequest(ctx.channel(), msgMapMap);
         } else if (type == Consts.MSG_TYPE_LOG_COPY_DATA) {
-            ElectionUtil.handleLogCopyData(election.getLogCopyIndexMapMap());
+            ElectionUtil.handleLogCopyData(election.getIndexMapLog(),
+                    election.getMsgMapLog(),
+                    election.getLogCopyIndexMapMap(),
+                    election.getLogCopyBytes());
         }
     }
 }

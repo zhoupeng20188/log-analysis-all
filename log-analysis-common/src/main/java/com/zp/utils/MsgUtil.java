@@ -74,12 +74,13 @@ public class MsgUtil {
             // 写
             FileOutputStream fos = null;
             ObjectOutputStream oos = null;
-            fos = new FileOutputStream("msgIndexMap.log");
+            fos = new FileOutputStream(Consts.FILE_NAME_MSG_INDEX_MAP);
             oos = new ObjectOutputStream(fos);
             oos.writeObject(MetaData.msgIndexMap);
-            fos = new FileOutputStream("projectMsgMap.log");
+            fos = new FileOutputStream(Consts.FILE_NAME_PROJECT_MSG_MAP);
             oos = new ObjectOutputStream(fos);
             oos.writeObject(MetaData.projectMsgMap);
+            FileUtil.writeOverride(new File(Consts.FILE_NAME_GLOBAL_COMMITED_INDEX), MetaData.globalCommitedIndex.toString());
             oos.flush();
             oos.close();
         } catch (Exception e) {
@@ -107,6 +108,16 @@ public class MsgUtil {
                 fis = new FileInputStream(file);
                 ois = new ObjectInputStream(fis);
                 MetaData.projectMsgMap = (ConcurrentHashMap<String, ProjectMsg>) ois.readObject();
+            }
+
+            file = new File(Consts.FILE_NAME_GLOBAL_COMMITED_INDEX);
+            if (!file.exists()) {
+                file.createNewFile();
+            } else if (file.length() > 0) {
+                fis = new FileInputStream(file);
+                byte[] bytes = new byte[1];
+                fis.read(bytes, 0, 1);
+                MetaData.globalCommitedIndex = new AtomicInteger(Integer.parseInt(new String(bytes)));
             }
             if (ois != null) {
                 ois.close();

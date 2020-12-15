@@ -27,5 +27,5 @@ public class MetaData {
     /**
      * 全局已提交消息id
      */
-    public static AtomicInteger globalCommitedIndex;
+    public static AtomicInteger globalCommitedIndex = new AtomicInteger(-1);
 }

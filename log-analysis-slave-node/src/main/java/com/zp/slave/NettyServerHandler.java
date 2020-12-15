@@ -2,6 +2,7 @@ package com.zp.slave;
 
 import com.zp.constrants.Consts;
 import com.zp.entity.Election;
+import com.zp.meta.MetaData;
 import com.zp.protobuf.ElectionPOJO;
 import com.zp.protobuf.MsgPOJO;
 import com.zp.utils.MetaDataUtil;
@@ -45,12 +46,13 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         log.info("master："+ ctx.channel().remoteAddress() + " is down");
-        log.info("preparing to elect new leader");
         int sleepTime = RandomUtil.electRandom();
+        log.info("preparing to elect new leader,sleepTIme=" + sleepTime + "ms");
         Thread.sleep(sleepTime);
         // 选举轮次+1
         Election.id++;
         Election.port = port;
+        Election.index = MetaData.globalCommitedIndex.get();
         // 先投自己一票
         Election.voteCnt++;
         // 发送投票请求给其它slave

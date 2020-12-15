@@ -40,6 +40,14 @@ public class FileUtil {
             e.printStackTrace();
         }
     }
+    public static void writeOverride(File file, String s) {
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            fileOutputStream.write(s.getBytes(Charset.forName("UTF-8")));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void write(File file, ByteBuf byteBuf) {
         try {

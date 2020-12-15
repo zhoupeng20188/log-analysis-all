@@ -60,17 +60,18 @@ public class ElectionUtil {
                 // 读取字节数
                 byte[] bytes = FileUtil.readBytes(new File(projectId + ".log"), commitedIndex, commitedIndexLocal);
                 ByteUtil.appendToTail(copyBytes, bytes);
+                ElectionPOJO.Election.Builder msgSend = ElectionPOJO.Election.newBuilder()
+                        .setType(Consts.MSG_TYPE_LOG_COPY_DATA)
+                        .setIndex(Election.index)
+                        .setIndexMapLog(FileUtil.convertFileToByteString(new File(Consts.FILE_NAME_MSG_INDEX_MAP)))
+                        .setMsgMapLog(FileUtil.convertFileToByteString(new File(Consts.FILE_NAME_PROJECT_MSG_MAP)))
+                        .putAllLogCopyIndexMap(logCopyIndexMap)
+                        .setLogCopyBytes(ByteString.copyFrom(copyBytes));
+                channel.writeAndFlush(msgSend);
             }
         }
 
-        ElectionPOJO.Election.Builder msgSend = ElectionPOJO.Election.newBuilder()
-                .setType(Consts.MSG_TYPE_LOG_COPY_DATA)
-                .setIndex(Election.index)
-                .setIndexMapLog(FileUtil.convertFileToByteString(new File(Consts.FILE_NAME_MSG_INDEX_MAP)))
-                .setMsgMapLog(FileUtil.convertFileToByteString(new File(Consts.FILE_NAME_PROJECT_MSG_MAP)))
-                .putAllLogCopyIndexMap(logCopyIndexMap)
-                .setLogCopyBytes(ByteString.copyFrom(copyBytes));
-        channel.writeAndFlush(msgSend);
+
     }
 
     public static void handleLogCopyData(ByteString indexMapLog,
