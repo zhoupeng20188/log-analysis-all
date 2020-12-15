@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.Map;
 
 @Slf4j
 public class ElectionNettyServerHandler extends ChannelInboundHandlerAdapter {
@@ -57,6 +58,11 @@ public class ElectionNettyServerHandler extends ChannelInboundHandlerAdapter {
         } else if (type == Consts.MSG_TYPE_HEARTBEAT_ACK) {
             log.info("接收到最新的slave集群地址：" + election.getContent());
             SlaveNodeServer.otherSlaveAddrs = election.getContent();
+        } else if (type == Consts.MSG_TYPE_LOG_INDEX_COPY_REQUEST) {
+            Map<String, Integer> msgMapMap = election.getMsgMapMap();
+            ElectionUtil.handleTypeLogIndexCopyRequest(ctx.channel(), msgMapMap);
+        } else if (type == Consts.MSG_TYPE_LOG_COPY_DATA) {
+            ElectionUtil.handleLogCopyData(election.getLogCopyIndexMapMap());
         }
     }
 }

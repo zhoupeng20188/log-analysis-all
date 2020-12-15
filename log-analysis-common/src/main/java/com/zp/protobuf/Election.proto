@@ -10,6 +10,9 @@ message Election { // 会在ElectionPOJO外部类中生成一个Election内部�
     int32 port =6; // 正在连接的客户端的server端口
     string content =7; // 内容
     string projectId = 8;
-    bytes indexMap = 9;
-    bytes msgMap = 10;
+    bytes indexMapLog = 9;
+    bytes msgMapLog = 10;
+    map<string, int32> msgMap = 11; // 同步日志用，key为projectId，value为commitedIndex
+    map<string, int32> logCopyIndexMap = 12; // key为projectId，value为各projectId日志中需要传输的增量的字节数
+    bytes logCopyBytes = 13; // 所有projectId需要传输的增加的字节数组
 }

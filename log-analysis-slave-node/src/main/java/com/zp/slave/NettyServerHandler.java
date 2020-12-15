@@ -4,6 +4,7 @@ import com.zp.constrants.Consts;
 import com.zp.entity.Election;
 import com.zp.protobuf.ElectionPOJO;
 import com.zp.protobuf.MsgPOJO;
+import com.zp.utils.MetaDataUtil;
 import com.zp.utils.MsgUtil;
 import com.zp.utils.RandomUtil;
 import io.netty.bootstrap.Bootstrap;
@@ -13,6 +14,8 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
+import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
+import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -69,7 +72,11 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
                     .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
+                            //配置Protobuf编码工具ProtobufVarint32LengthFieldPrepender与ProtobufEncoder
+                            socketChannel.pipeline().addLast(new ProtobufVarint32LengthFieldPrepender());
                             socketChannel.pipeline().addLast(new ProtobufEncoder());
+                            //配置Protobuf解码工具ProtobufVarint32FrameDecoder与ProtobufDecoder
+                            socketChannel.pipeline().addLast(new ProtobufVarint32FrameDecoder());
                             socketChannel.pipeline().addLast(new ProtobufDecoder(ElectionPOJO.Election.getDefaultInstance()));
                             socketChannel.pipeline().addLast(new ElectionNettyClientHandler());
                         }

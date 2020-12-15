@@ -26,6 +26,8 @@ public class MsgUtil {
     public static void storeMsg(String msgContent,
                                 long msgId,
                                 String projectId) {
+        // 全局index+1
+        MetaData.globalIndex.incrementAndGet();
         ProjectMsg projectMsg = MetaData.projectMsgMap.get(projectId);
         if (projectMsg == null) {
             projectMsg = new ProjectMsg();
@@ -59,6 +61,8 @@ public class MsgUtil {
      */
     public static void changeToCommited(String projectId,
                                         long msgId) {
+        // 全局commitedIndex+1
+        MetaData.globalCommitedIndex.incrementAndGet();
         ProjectMsg projectMsg = MetaData.projectMsgMap.get(projectId);
         projectMsg.setCommitedIndex(MetaData.msgIndexMap.get(msgId));
         // index存盘

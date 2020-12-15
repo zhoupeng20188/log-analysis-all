@@ -3,6 +3,7 @@ package com.zp.utils;
 import com.google.protobuf.ByteString;
 import io.netty.buffer.ByteBuf;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -63,13 +64,35 @@ public class FileUtil {
         return null;
     }
 
-    public static byte[] convertFileToByteArray(File file) {
+    public static byte[] readBytes(File file, int start, int bytes) {
         try {
             FileInputStream fileInputStream = new FileInputStream(file);
-            int bytes = (int) file.length();
-            byte[] buffer = new byte[(int) file.length()];
-            fileInputStream.read(buffer, 0, bytes);
+            byte[] buffer = new byte[bytes];
+            fileInputStream.read(buffer, start, bytes);
             return buffer;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static byte[] convertFileToByteArray(File file) {
+        byte[] data = null;
+        try {
+            FileInputStream fileInputStream = new FileInputStream(file);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+            int len;
+            byte[] buffer = new byte[1024];
+            while ((len = fileInputStream.read(buffer)) != -1) {
+                baos.write(buffer, 0, len);
+            }
+
+            data = baos.toByteArray();
+
+            fileInputStream.close();
+            baos.close();
+            return data;
         } catch (Exception e) {
             e.printStackTrace();
         }
