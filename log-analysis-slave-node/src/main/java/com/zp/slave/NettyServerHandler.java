@@ -5,6 +5,7 @@ import com.zp.entity.Election;
 import com.zp.meta.MetaData;
 import com.zp.protobuf.ElectionPOJO;
 import com.zp.protobuf.MsgPOJO;
+import com.zp.utils.ChannelUtil;
 import com.zp.utils.MetaDataUtil;
 import com.zp.utils.MsgUtil;
 import com.zp.utils.RandomUtil;
@@ -84,7 +85,8 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
                     });
             // 客户端连接服务端
             ChannelFuture channelFuture = bootstrap.connect(ip, Integer.parseInt(port));
-
+            // 保存其它slave的channel
+            ChannelUtil.storeChannel(SlaveNodeServer.slaveClientChannels, SlaveNodeServer.slaveChannelMap, channelFuture.channel());
 
         } catch (Exception e) {
             e.printStackTrace();

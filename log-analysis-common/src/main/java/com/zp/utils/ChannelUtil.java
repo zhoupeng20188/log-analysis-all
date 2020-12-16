@@ -3,6 +3,7 @@ package com.zp.utils;
 import io.netty.channel.Channel;
 
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -16,10 +17,8 @@ public class ChannelUtil {
                                     HashMap<String, Channel> slaveChannelMap,
                                     Channel channel){
         slaveClientChannels.add(channel);
-        InetSocketAddress inetSocketAddress = (InetSocketAddress) channel.remoteAddress();
-        String ip = inetSocketAddress.getAddress().getHostAddress();
-        int port = inetSocketAddress.getPort();
-        String address = ip + ":" + port;
+        SocketAddress remoteAddress = channel.remoteAddress();
+        String address = String.valueOf(remoteAddress).replaceAll("/","");
         slaveChannelMap.put(address, channel);
     }
 

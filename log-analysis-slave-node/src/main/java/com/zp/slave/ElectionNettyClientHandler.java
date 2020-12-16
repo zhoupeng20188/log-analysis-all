@@ -23,7 +23,6 @@ public class ElectionNettyClientHandler extends ChannelInboundHandlerAdapter {
                 .setTerm(Election.term)
                 .setIndex(MetaData.globalCommitedIndex.get())
                 .setElectionId(Election.id);
-        ChannelUtil.storeChannel(SlaveNodeServer.slaveClientChannels, SlaveNodeServer.slaveChannelMap, ctx.channel());
         ctx.channel().writeAndFlush(msgSend);
     }
 

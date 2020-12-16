@@ -4,7 +4,6 @@ import com.zp.constrants.Consts;
 import com.zp.entity.Election;
 import com.zp.meta.MetaData;
 import com.zp.protobuf.ElectionPOJO;
-import com.zp.protobuf.MsgPOJO;
 import com.zp.utils.ChannelUtil;
 import com.zp.utils.ElectionUtil;
 import com.zp.utils.MsgUtil;
@@ -12,16 +11,10 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 import java.util.Map;
 
 @Slf4j
 public class ElectionNettyServerHandler extends ChannelInboundHandlerAdapter {
-    @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        ChannelUtil.storeChannel(SlaveNodeServer.slaveClientChannels, SlaveNodeServer.slaveChannelMap, ctx.channel());
-    }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
