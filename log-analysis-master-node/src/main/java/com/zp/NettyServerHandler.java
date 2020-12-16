@@ -13,7 +13,9 @@ import io.netty.util.concurrent.GlobalEventExecutor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -33,7 +35,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
      */
     private static ConcurrentHashMap<Long, Integer> ackMap = new ConcurrentHashMap<>();
 
-    private static List<String> slaveServerList = new ArrayList<>();
+    private static Set<String> slaveServerList = new HashSet<>();
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {

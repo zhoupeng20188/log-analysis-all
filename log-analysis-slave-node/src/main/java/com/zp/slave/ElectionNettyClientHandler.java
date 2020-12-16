@@ -2,6 +2,7 @@ package com.zp.slave;
 
 import com.zp.constrants.Consts;
 import com.zp.entity.Election;
+import com.zp.meta.MetaData;
 import com.zp.protobuf.ElectionPOJO;
 import com.zp.utils.ChannelUtil;
 import com.zp.utils.ElectionUtil;
@@ -20,6 +21,7 @@ public class ElectionNettyClientHandler extends ChannelInboundHandlerAdapter {
         ElectionPOJO.Election.Builder msgSend = ElectionPOJO.Election.newBuilder()
                 .setType(Consts.MSG_TYPE_ELECTION)
                 .setTerm(Election.term)
+                .setIndex(MetaData.globalCommitedIndex.get())
                 .setElectionId(Election.id);
         ChannelUtil.storeChannel(SlaveNodeServer.slaveClientChannels, SlaveNodeServer.slaveChannelMap, ctx.channel());
         ctx.channel().writeAndFlush(msgSend);
@@ -44,6 +46,7 @@ public class ElectionNettyClientHandler extends ChannelInboundHandlerAdapter {
                     ElectionPOJO.Election.Builder msgSend = ElectionPOJO.Election.newBuilder()
                             .setType(Consts.MSG_TYPE_ELECTION_MASTER)
                             .setTerm(Election.term)
+                            .setIndex(MetaData.globalCommitedIndex.get())
                             .setElectionId(Election.id);
                     log.info("向slave：" + slaveChannel.remoteAddress() + "发送成为master的消息");
                     slaveChannel.writeAndFlush(msgSend);
@@ -68,7 +71,8 @@ public class ElectionNettyClientHandler extends ChannelInboundHandlerAdapter {
             ElectionUtil.handleLogCopyData(election.getIndexMapLog(),
                     election.getMsgMapLog(),
                     election.getLogCopyIndexMapMap(),
-                    election.getLogCopyBytes());
+                    election.getLogCopyBytes(),
+                    election.getIndex());
         }
     }
 }

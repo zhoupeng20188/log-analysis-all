@@ -32,7 +32,7 @@ public class SlaveNodeServer {
     public static volatile String otherSlaveAddrs;
     public static volatile Set<Channel> slaveClientChannels = new HashSet<>();
     public static volatile HashMap<String, Channel> slaveChannelMap = new HashMap<>();
-    public static volatile List<String> slaveServerList = new ArrayList<>();
+    public static volatile Set<String> slaveServerList = new HashSet<>();
     private int slaveId;
     private String serverAddr;
     private int serverPort;

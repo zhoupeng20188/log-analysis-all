@@ -2,6 +2,7 @@ package com.zp.slave;
 
 import com.zp.constrants.Consts;
 import com.zp.entity.Election;
+import com.zp.meta.MetaData;
 import com.zp.protobuf.ElectionPOJO;
 import com.zp.protobuf.MsgPOJO;
 import com.zp.utils.ChannelUtil;
@@ -33,10 +34,10 @@ public class ElectionNettyServerHandler extends ChannelInboundHandlerAdapter {
             // 消息index
             int index = election.getIndex();
             int term = election.getTerm();
-            log.info("当前term:{},index:{}", Election.term, Election.index);
+            log.info("接收到slave的投票请求，当前term:{},index:{}", Election.term, MetaData.globalCommitedIndex.get());
             if (Election.id <= electionId
                     && Election.term <= term
-                    && Election.index <= index
+                    && MetaData.globalCommitedIndex.get() <= index
                     && !Election.isLeader) {
                 ElectionPOJO.Election.Builder msgSend = ElectionPOJO.Election.newBuilder()
                         .setType(Consts.MSG_TYPE_ELECTION_ACK)
@@ -66,7 +67,8 @@ public class ElectionNettyServerHandler extends ChannelInboundHandlerAdapter {
             ElectionUtil.handleLogCopyData(election.getIndexMapLog(),
                     election.getMsgMapLog(),
                     election.getLogCopyIndexMapMap(),
-                    election.getLogCopyBytes());
+                    election.getLogCopyBytes(),
+                    election.getIndex());
         }
     }
 }

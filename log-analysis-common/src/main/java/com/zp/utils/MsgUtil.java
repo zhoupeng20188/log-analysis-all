@@ -8,6 +8,7 @@ import io.netty.channel.ChannelHandlerContext;
 
 import java.io.*;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -48,7 +49,7 @@ public class MsgUtil {
         MetaData.msgIndexMap.put(msgId, indexNow);
         msgIndexList.add(indexNow, msgLength);
         // 顺序写文件
-        File file = new File(projectId + ".log");
+        File file = new File(MetaData.fileDir + projectId + ".log");
         FileUtil.write(file, msgContent);
         MetaData.projectMsgMap.put(projectId, projectMsg);
     }
@@ -74,13 +75,13 @@ public class MsgUtil {
             // 写
             FileOutputStream fos = null;
             ObjectOutputStream oos = null;
-            fos = new FileOutputStream(Consts.FILE_NAME_MSG_INDEX_MAP);
+            fos = new FileOutputStream(MetaData.fileDir + Consts.FILE_NAME_MSG_INDEX_MAP);
             oos = new ObjectOutputStream(fos);
             oos.writeObject(MetaData.msgIndexMap);
-            fos = new FileOutputStream(Consts.FILE_NAME_PROJECT_MSG_MAP);
+            fos = new FileOutputStream(MetaData.fileDir + Consts.FILE_NAME_PROJECT_MSG_MAP);
             oos = new ObjectOutputStream(fos);
             oos.writeObject(MetaData.projectMsgMap);
-            FileUtil.writeOverride(new File(Consts.FILE_NAME_GLOBAL_COMMITED_INDEX), MetaData.globalCommitedIndex.toString());
+            storeCommitedIndex();
             oos.flush();
             oos.close();
         } catch (Exception e) {
@@ -88,11 +89,19 @@ public class MsgUtil {
         }
     }
 
+    public static void storeCommitedIndex(){
+        FileUtil.writeOverride(new File(MetaData.fileDir + Consts.FILE_NAME_GLOBAL_COMMITED_INDEX), MetaData.globalCommitedIndex.toString());
+    }
+
     public static void initIndex() {
+        initIndex(false);
+    }
+
+    public static void initIndex(boolean excludeCommitedIndex) {
         try {
             FileInputStream fis = null;
             ObjectInputStream ois = null;
-            File file = new File(Consts.FILE_NAME_MSG_INDEX_MAP);
+            File file = new File(MetaData.fileDir + Consts.FILE_NAME_MSG_INDEX_MAP);
             if (!file.exists()) {
                 file.createNewFile();
             } else if (file.length() > 0) {
@@ -101,7 +110,7 @@ public class MsgUtil {
                 MetaData.msgIndexMap = (ConcurrentHashMap<Long, Integer>) ois.readObject();
             }
 
-            file = new File(Consts.FILE_NAME_PROJECT_MSG_MAP);
+            file = new File(MetaData.fileDir + Consts.FILE_NAME_PROJECT_MSG_MAP);
             if (!file.exists()) {
                 file.createNewFile();
             } else if (file.length() > 0) {
@@ -110,15 +119,18 @@ public class MsgUtil {
                 MetaData.projectMsgMap = (ConcurrentHashMap<String, ProjectMsg>) ois.readObject();
             }
 
-            file = new File(Consts.FILE_NAME_GLOBAL_COMMITED_INDEX);
-            if (!file.exists()) {
-                file.createNewFile();
-            } else if (file.length() > 0) {
-                fis = new FileInputStream(file);
-                byte[] bytes = new byte[1];
-                fis.read(bytes, 0, 1);
-                MetaData.globalCommitedIndex = new AtomicInteger(Integer.parseInt(new String(bytes)));
+            if(!excludeCommitedIndex) {
+                file = new File(MetaData.fileDir + Consts.FILE_NAME_GLOBAL_COMMITED_INDEX);
+                if (!file.exists()) {
+                    file.createNewFile();
+                } else if (file.length() > 0) {
+                    fis = new FileInputStream(file);
+                    byte[] bytes = new byte[1];
+                    fis.read(bytes, 0, 1);
+                    MetaData.globalCommitedIndex = new AtomicInteger(Integer.parseInt(new String(bytes)));
+                }
             }
+
             if (ois != null) {
                 ois.close();
             }
@@ -128,7 +140,7 @@ public class MsgUtil {
     }
 
     public static void sendHeartbeatAck(ChannelHandlerContext ctx,
-                                        List<String> slaveServerList,
+                                        Set<String> slaveServerList,
                                         int port) {
         // 发送heartbeat的ack，包括所有slave server的地址
         String remoteAddress = "";

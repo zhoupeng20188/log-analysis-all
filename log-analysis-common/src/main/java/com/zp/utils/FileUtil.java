@@ -64,7 +64,9 @@ public class FileUtil {
         try {
             FileInputStream fileInputStream = new FileInputStream(file);
             byte[] buffer = new byte[bytes];
-            fileInputStream.read(buffer, start, bytes);
+            // 从指定位置开始
+            fileInputStream.skip(start);
+            fileInputStream.read(buffer, 0, bytes);
             return new String(buffer);
         } catch (Exception e) {
             e.printStackTrace();
@@ -76,7 +78,9 @@ public class FileUtil {
         try {
             FileInputStream fileInputStream = new FileInputStream(file);
             byte[] buffer = new byte[bytes];
-            fileInputStream.read(buffer, start, bytes);
+            // 从指定位置开始
+            fileInputStream.skip(start);
+            fileInputStream.read(buffer, 0, bytes);
             return buffer;
         } catch (Exception e) {
             e.printStackTrace();

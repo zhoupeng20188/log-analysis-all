@@ -13,6 +13,9 @@ public class ByteUtil {
      */
     public static byte[] appendToTail(byte[] from, byte[] to) {
         int fromLength = from.length;
+        if(to == null){
+            return from;
+        }
         int toLength = to.length;
         byte[] bytes = new byte[fromLength + toLength];
         for (int i = 0; i < from.length; i++) {

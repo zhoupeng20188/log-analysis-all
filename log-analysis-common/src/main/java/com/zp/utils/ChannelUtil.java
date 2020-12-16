@@ -23,7 +23,7 @@ public class ChannelUtil {
         slaveChannelMap.put(address, channel);
     }
 
-    public static void storeSlaveAddress(Channel channel, List<String> slaveServerList, int port){
+    public static void storeSlaveAddress(Channel channel, Set<String> slaveServerList, int port){
         // 获取当前连接的客户端的ip
         InetSocketAddress inetSocketAddress = (InetSocketAddress) channel.remoteAddress();
         String ip = inetSocketAddress.getAddress().getHostAddress();

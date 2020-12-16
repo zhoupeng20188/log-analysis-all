@@ -28,4 +28,8 @@ public class MetaData {
      * 全局已提交消息id
      */
     public static AtomicInteger globalCommitedIndex = new AtomicInteger(-1);
+    /**
+     * 文件存放目录
+     */
+    public static String fileDir = "";
 }

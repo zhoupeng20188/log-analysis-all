@@ -52,7 +52,6 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         // 选举轮次+1
         Election.id++;
         Election.port = port;
-        Election.index = MetaData.globalCommitedIndex.get();
         // 先投自己一票
         Election.voteCnt++;
         // 发送投票请求给其它slave
