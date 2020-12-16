@@ -116,4 +116,23 @@ public class FileUtil {
         return ByteString.copyFrom(convertFileToByteArray(file));
 
     }
+
+    /**
+     * 将文件截取到前bytes个字节并覆盖
+     * @param file
+     * @param bytes
+     * @return
+     */
+    public static void removeBytes(File file, int bytes) {
+        try {
+            FileInputStream fileInputStream = new FileInputStream(file);
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            byte[] buffer = new byte[bytes];
+            // 从指定位置开始
+            fileInputStream.read(buffer, 0, bytes);
+            fileOutputStream.write(buffer);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

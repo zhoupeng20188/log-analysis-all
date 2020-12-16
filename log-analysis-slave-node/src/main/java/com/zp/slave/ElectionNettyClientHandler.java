@@ -2,16 +2,20 @@ package com.zp.slave;
 
 import com.zp.constrants.Consts;
 import com.zp.entity.Election;
+import com.zp.entity.ProjectMsg;
 import com.zp.meta.MetaData;
 import com.zp.protobuf.ElectionPOJO;
 import com.zp.utils.ChannelUtil;
 import com.zp.utils.ElectionUtil;
+import com.zp.utils.FileUtil;
 import com.zp.utils.MsgUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j

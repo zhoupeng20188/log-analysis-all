@@ -46,6 +46,23 @@ public class ElectionUtil {
                                                      Map<String, Integer> msgMap) {
         byte[] copyBytes = null;
         HashMap<String, Integer> logCopyIndexMap = new HashMap<>();
+
+        // 将所有工程中的commitedIndex以外的日志截取掉
+        for (Map.Entry<String, ProjectMsg> entry : MetaData.projectMsgMap.entrySet()) {
+            String projectId = entry.getKey();
+            ProjectMsg projectMsg = entry.getValue();
+            List<Integer> msgIndexList = projectMsg.getMsgIndexList();
+            int bytesNum = msgIndexList.get(projectMsg.getCommitedIndex());
+            if (projectMsg.getIndex().get() > projectMsg.getCommitedIndex()) {
+                // 截取log文件到commitedIndex指向的字节数
+                FileUtil.removeBytes(new File(MetaData.fileDir + projectId + ".log"), bytesNum);
+            }
+            // 将index设为commitedIndex
+            projectMsg.setIndex(new AtomicInteger(projectMsg.getCommitedIndex()));
+        }
+        // 将globalIndex设为globalCommitedIndex
+        MetaData.globalIndex = MetaData.globalCommitedIndex;
+
         if (!msgMap.isEmpty()) {
             // 增量同步
             for (Map.Entry<String, Integer> entry : msgMap.entrySet()) {
@@ -100,6 +117,27 @@ public class ElectionUtil {
                                          Map<String, Integer> logCopyIndexMap,
                                          ByteString logCopyBytes,
                                          int index) {
+        // 更新日志文件
+        byte[] copyBytes = logCopyBytes.toByteArray();
+        for (Map.Entry<String, Integer> entry : logCopyIndexMap.entrySet()) {
+            String projectId = entry.getKey();
+            Integer bytes = entry.getValue();
+            ProjectMsg projectMsg = MetaData.projectMsgMap.get(projectId);
+            List<Integer> msgIndexList = projectMsg.getMsgIndexList();
+            int bytesNum = msgIndexList.get(projectMsg.getCommitedIndex());
+            if (projectMsg.getIndex().get() > projectMsg.getCommitedIndex()) {
+                // 截取log文件到commitedIndex指向的字节数
+                FileUtil.removeBytes(new File(MetaData.fileDir + projectId + ".log"), bytesNum);
+            }
+            // 将index设为commitedIndex
+            projectMsg.setIndex(new AtomicInteger(projectMsg.getCommitedIndex()));
+            byte[] content = ByteUtil.readBytes(copyBytes, bytes);
+            // 追加写入日志文件
+            FileUtil.write(new File(MetaData.fileDir + projectId + ".log"), content);
+        }
+        // 将globalIndex设为globalCommitedIndex
+        MetaData.globalIndex = MetaData.globalCommitedIndex;
+
         // 强制更新为master的日志index
         MetaData.globalCommitedIndex = new AtomicInteger(index);
         // commitedIndex存盘
@@ -110,14 +148,7 @@ public class ElectionUtil {
         FileUtil.writeOverride(new File(MetaData.fileDir + Consts.FILE_NAME_PROJECT_MSG_MAP), msgMapLog);
         // 将文件内容填充到内存中
         MsgUtil.initIndex(true);
-        byte[] copyBytes = logCopyBytes.toByteArray();
-        for (Map.Entry<String, Integer> entry : logCopyIndexMap.entrySet()) {
-            String projectId = entry.getKey();
-            Integer bytes = entry.getValue();
-            byte[] content = ByteUtil.readBytes(copyBytes, bytes);
-            // 追加写入日志文件
-            FileUtil.write(new File(MetaData.fileDir + projectId + ".log"), content);
-        }
+
         log.info("master's log data is copied to local。new commitedIndex is " + index);
     }
 }
