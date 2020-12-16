@@ -39,7 +39,9 @@ public class ThreadUtil {
                             eventLoop.schedule(new Runnable() {
                                 @Override
                                 public void run() {
-                                    NettyUtil.startNettyClient(new NettyClientHandler(Server.port), serverAddr, serverPort);
+                                    if (!Election.stopHeartbeat) {
+                                        NettyUtil.startNettyClient(new NettyClientHandler(Server.port), serverAddr, serverPort);
+                                    }
                                 }
                             }, 10, TimeUnit.SECONDS);
                         }

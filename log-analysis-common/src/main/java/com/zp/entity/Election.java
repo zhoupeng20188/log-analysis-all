@@ -29,4 +29,8 @@ public class Election {
      * 当前slave port
      */
     public static int port;
+    /**
+     * 是否停止发送心跳
+     */
+    public static volatile boolean stopHeartbeat;
 }

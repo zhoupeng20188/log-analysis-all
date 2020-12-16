@@ -76,8 +76,12 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
                 MsgUtil.sendHeartbeatAck(ctx, msgRsrv.getPort());
             }
         } else if (msgType == Consts.MSG_TYPE_HEARTBEAT_ACK) {
-            log.info("接收到最新的slave集群地址：" + msgContent);
-            Server.otherSlaveAddrs = msgContent;
+            if(!isLeader){
+                Election.stopHeartbeat = true;
+            } else {
+                log.info("接收到最新的slave集群地址：" + msgContent);
+                Server.otherSlaveAddrs = msgContent;
+            }
 
         } if (msgType == Consts.MSG_TYPE_HEARTBEAT_ACK) {
             log.info("接收到最新的slave集群地址：" + msgContent);
