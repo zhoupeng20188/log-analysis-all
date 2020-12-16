@@ -1,5 +1,6 @@
 package com.zp.utils;
 
+import com.zp.entity.Server;
 import io.netty.channel.Channel;
 
 import java.net.InetSocketAddress;
@@ -22,11 +23,11 @@ public class ChannelUtil {
         slaveChannelMap.put(address, channel);
     }
 
-    public static void storeSlaveAddress(Channel channel, Set<String> slaveServerList, int port){
+    public static void storeSlaveAddress(Channel channel, int port){
         // 获取当前连接的客户端的ip
         InetSocketAddress inetSocketAddress = (InetSocketAddress) channel.remoteAddress();
         String ip = inetSocketAddress.getAddress().getHostAddress();
         String address = ip + ":" + port;
-        slaveServerList.add(address);
+        Server.slaveServerList.add(address);
     }
 }

@@ -35,11 +35,11 @@ public class NettyUtil {
                             socketChannel.pipeline().addLast(nettyHandler);
                         }
                     });
-            log.info("slave node-" + Server.id + " is started...");
             // 客户端连接服务端
             ChannelFuture channelFuture = bootstrap.connect(serverAddr, serverPort);
 
             Server.masterChannel = channelFuture.channel();
+            log.info("slave node-" + Server.id + " is started...");
 
         } catch (Exception e) {
             e.printStackTrace();

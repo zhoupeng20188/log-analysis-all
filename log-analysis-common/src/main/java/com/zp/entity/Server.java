@@ -5,6 +5,7 @@ import io.netty.channel.Channel;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @Author zp
@@ -18,4 +19,8 @@ public class Server {
     public static volatile HashMap<String, Channel> slaveChannelMap = new HashMap<>();
     public static volatile Set<String> slaveServerList = new HashSet<>();
     public static volatile int port;
+    /**
+     * ackMap,key为msgId，value为ack次数
+     */
+    public static ConcurrentHashMap<Long, Integer> ackMap = new ConcurrentHashMap<>();
 }

@@ -58,9 +58,9 @@ public class ElectionNettyClientHandler extends ChannelInboundHandlerAdapter {
             ElectionUtil.handleTypeMaster(ctx.channel(), election.getTerm(), election.getIndex());
         } else if (type == Consts.MSG_TYPE_HEARTBEAT) {
             // 保存slave的地址
-            ChannelUtil.storeSlaveAddress(ctx.channel(), Server.slaveServerList, election.getPort());
+            ChannelUtil.storeSlaveAddress(ctx.channel(), election.getPort());
             // 发送heartbeat的ack，包括所有slave server的地址
-            MsgUtil.sendHeartbeatAck(ctx, Server.slaveServerList, election.getPort());
+            MsgUtil.sendHeartbeatAck(ctx, election.getPort());
         } else if (type == Consts.MSG_TYPE_HEARTBEAT_ACK) {
             log.info("接收到最新的slave集群地址：" + election.getContent());
             Server.otherSlaveAddrs = election.getContent();

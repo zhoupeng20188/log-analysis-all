@@ -3,6 +3,7 @@ package com.zp.utils;
 import com.zp.constrants.Consts;
 import com.zp.entity.Election;
 import com.zp.entity.Server;
+import com.zp.handler.NettyClientHandler;
 import com.zp.protobuf.MsgPOJO;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -18,8 +19,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class ThreadUtil {
-    public static void startHeartbeatThread(ChannelInboundHandlerAdapter nettyHandler,
-                                            String serverAddr,
+    public static void startHeartbeatThread(String serverAddr,
                                             int serverPort) {
         Executors.newSingleThreadScheduledExecutor()
                 .scheduleAtFixedRate(new Runnable() {
@@ -39,7 +39,7 @@ public class ThreadUtil {
                             eventLoop.schedule(new Runnable() {
                                 @Override
                                 public void run() {
-                                    NettyUtil.startNettyClient(nettyHandler, serverAddr, serverPort);
+                                    NettyUtil.startNettyClient(new NettyClientHandler(Server.port), serverAddr, serverPort);
                                 }
                             }, 10, TimeUnit.SECONDS);
                         }

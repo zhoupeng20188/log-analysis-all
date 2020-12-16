@@ -2,6 +2,7 @@ package com.zp.utils;
 
 import com.zp.constrants.Consts;
 import com.zp.entity.ProjectMsg;
+import com.zp.entity.Server;
 import com.zp.meta.MetaData;
 import com.zp.protobuf.MsgPOJO;
 import io.netty.channel.ChannelHandlerContext;
@@ -140,11 +141,10 @@ public class MsgUtil {
     }
 
     public static void sendHeartbeatAck(ChannelHandlerContext ctx,
-                                        Set<String> slaveServerList,
                                         int port) {
         // 发送heartbeat的ack，包括所有slave server的地址
         String remoteAddress = "";
-        for (String s : slaveServerList) {
+        for (String s : Server.slaveServerList) {
             if (!s.contains(String.valueOf(port))) {
                 // 返回不包含自己的其它slave的地址
                 remoteAddress += s + ",";

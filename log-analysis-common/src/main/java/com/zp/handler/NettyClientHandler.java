@@ -1,10 +1,8 @@
-package com.zp;
+package com.zp.handler;
 
 import com.zp.constrants.Consts;
 import com.zp.entity.Election;
 import com.zp.entity.Server;
-import com.zp.handler.ElectionNettyClientHandler;
-import com.zp.handler.NettyClientHandler;
 import com.zp.protobuf.MsgPOJO;
 import com.zp.utils.ChannelUtil;
 import com.zp.utils.ElectionUtil;
@@ -13,50 +11,55 @@ import com.zp.utils.ThreadUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.group.ChannelGroup;
-import io.netty.channel.group.DefaultChannelGroup;
-import io.netty.util.concurrent.GlobalEventExecutor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.SocketAddress;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @Author zp
  * @create 2020/9/1 18:12
  */
 @Slf4j
-public class NettyServerHandler extends ChannelInboundHandlerAdapter {
+public class NettyClientHandler extends ChannelInboundHandlerAdapter {
 
-    /**
-     * 定义一个channel组，管理所有channel
-     */
-//    private static ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+    private int port;
 
+    public NettyClientHandler() {
+    }
+
+    public NettyClientHandler(int port) {
+        this.port = port;
+    }
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        MsgPOJO.Msg.Builder msgSend = MsgPOJO.Msg.newBuilder()
+                .setType(Consts.MSG_TYPE_ACTIVE_SLAVE)
+                .setPort(port);
+        ctx.channel().writeAndFlush(msgSend);
+    }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         // 开始选举
-        ElectionUtil.startElection(ctx.channel(), Server.port);
+        ElectionUtil.startElection(ctx.channel(), port);
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         MsgPOJO.Msg msgRsrv = (MsgPOJO.Msg) msg;
-        // 消息内容
+        // 消息id
         long msgId = msgRsrv.getMsgId();
         // 消息内容
         String msgContent = msgRsrv.getContent();
-
         // 消息类型
         int msgType = msgRsrv.getType();
         // projectId
         String projectId = msgRsrv.getProjectId();
+        // 对方是否为leader
         boolean isLeader = msgRsrv.getIsLeader();
-        log.info("客户端消息：" + msg);
-        log.info("客户端地址：" + ctx.channel().remoteAddress());
+//        log.info("接收到master node消息：" + msg);
+//        log.info("master node地址：" + ctx.channel().remoteAddress());
         MsgPOJO.Msg.Builder builder = MsgPOJO.Msg.newBuilder();
         MsgPOJO.Msg.Builder msgSend = null;
         if (msgType == Consts.MSG_TYPE_HEARTBEAT) {
@@ -76,9 +79,27 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
             log.info("接收到最新的slave集群地址：" + msgContent);
             Server.otherSlaveAddrs = msgContent;
 
+        } if (msgType == Consts.MSG_TYPE_HEARTBEAT_ACK) {
+            log.info("接收到最新的slave集群地址：" + msgContent);
+            Server.otherSlaveAddrs = msgContent;
+
+        } else if (msgType == Consts.MSG_TYPE_UNCOMMITED) {
+            log.info("接收到master的uncommited请求！");
+            // 本地存储消息
+            MsgUtil.storeMsg(msgContent, msgId, projectId);
+            // 给master发送ACK消息
+            msgSend = builder
+                    .setMsgId(msgId)
+                    .setProjectId(projectId)
+                    .setType(Consts.MSG_TYPE_UNCOMMITED_ACK)
+                    .setContent(msgContent);
+            ctx.channel().writeAndFlush(msgSend);
+        } else if (msgType == Consts.MSG_TYPE_COMMITED) {
+            log.info("接收到master的commited请求！");
+            // 修改本地状态为commited
+            MsgUtil.changeToCommited(projectId, msgId);
         } else if (msgType == Consts.MSG_TYPE_ACTIVE_SLAVE) {
             log.info("slave：" + ctx.channel().remoteAddress() + " is connected");
-//            channelGroup.add(ctx.channel());
             Server.slaveClientChannels.add(ctx.channel());
             // 保存slave的地址
             ChannelUtil.storeSlaveAddress(ctx.channel(), msgRsrv.getPort());
@@ -121,6 +142,5 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
                 channel.writeAndFlush(msgSend);
             }
         }
-
     }
 }

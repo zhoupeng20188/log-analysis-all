@@ -2,6 +2,7 @@ package com.zp.slave;
 
 import com.zp.entity.Server;
 import com.zp.handler.ElectionNettyServerHandler;
+import com.zp.handler.NettyClientHandler;
 import com.zp.protobuf.ElectionPOJO;
 import com.zp.protobuf.MsgPOJO;
 import com.zp.utils.MsgUtil;
@@ -66,34 +67,9 @@ public class SlaveNodeServer {
     public void start() {
         // 启动时加载index到内存中
         MsgUtil.initIndex();
-        NettyUtil.startNettyClient(new NettyServerHandler(Server.port), serverAddr, serverPort);
-        ThreadUtil.startHeartbeatThread(new NettyServerHandler(Server.port), serverAddr, serverPort);
+        NettyUtil.startNettyClient(new NettyClientHandler(Server.port), serverAddr, serverPort);
+        ThreadUtil.startHeartbeatThread(serverAddr, serverPort);
         startNettyServer();
-    }
-
-    public void startNettyClient() {
-        NioEventLoopGroup nioEventLoopGroup = new NioEventLoopGroup();
-        Bootstrap bootstrap = new Bootstrap();
-        try {
-            bootstrap.group(nioEventLoopGroup)
-                    .channel(NioSocketChannel.class)
-                    .handler(new ChannelInitializer<SocketChannel>() {
-                        @Override
-                        protected void initChannel(SocketChannel socketChannel) throws Exception {
-                            socketChannel.pipeline().addLast(new ProtobufEncoder());
-                            socketChannel.pipeline().addLast(new ProtobufDecoder(MsgPOJO.Msg.getDefaultInstance()));
-                            socketChannel.pipeline().addLast(new NettyServerHandler(Server.port));
-                        }
-                    });
-            log.info("slave node-" + slaveId + " is started...");
-            // 客户端连接服务端
-            ChannelFuture channelFuture = bootstrap.connect(serverAddr, serverPort);
-
-            Server.masterChannel = channelFuture.channel();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public void startNettyServer() {

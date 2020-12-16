@@ -1,5 +1,6 @@
 package com.zp;
 
+import com.zp.entity.Election;
 import com.zp.entity.Server;
 import com.zp.utils.ServerUtil;
 import org.apache.commons.cli.CommandLine;
@@ -24,6 +25,7 @@ public class MasterNodeStartup {
 //            return null;
         }
         Server.port = 9527;
+        Election.isLeader = true;
         new MasterNodeServer(1).start();
     }
 
