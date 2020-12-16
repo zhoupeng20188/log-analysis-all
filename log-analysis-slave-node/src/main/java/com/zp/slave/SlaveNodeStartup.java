@@ -1,5 +1,6 @@
 package com.zp.slave;
 
+import com.zp.entity.Server;
 import com.zp.meta.MetaData;
 import com.zp.utils.ServerUtil;
 import org.apache.commons.cli.CommandLine;
@@ -26,8 +27,9 @@ public class SlaveNodeStartup {
         String arg0 = args[0];
         String arg1 = args[1];
         String arg2 = args[2];
+        Server.port = Integer.parseInt(arg1);
         MetaData.fileDir = arg2;
-        new SlaveNodeServer(Integer.parseInt(arg0), "127.0.0.1", 9527, Integer.parseInt(arg1)).start();
+        new SlaveNodeServer(Integer.parseInt(arg0), "127.0.0.1", 9527).start();
     }
 
     public static Options buildCommandlineOptions(final Options options) {

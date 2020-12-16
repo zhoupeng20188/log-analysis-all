@@ -1,21 +1,18 @@
-package com.zp.slave;
+package com.zp.handler;
 
 import com.zp.constrants.Consts;
 import com.zp.entity.Election;
-import com.zp.entity.ProjectMsg;
+import com.zp.entity.Server;
 import com.zp.meta.MetaData;
 import com.zp.protobuf.ElectionPOJO;
 import com.zp.utils.ChannelUtil;
 import com.zp.utils.ElectionUtil;
-import com.zp.utils.FileUtil;
 import com.zp.utils.MsgUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -44,8 +41,8 @@ public class ElectionNettyClientHandler extends ChannelInboundHandlerAdapter {
                 Election.term++;
                 log.info("slave：" + Election.port + "成为 master! term = " + Election.term);
                 // 向其它slave发送成为master的消息
-                log.info("slaveClientChannels size = " + SlaveNodeServer.slaveClientChannels.size());
-                for (Channel slaveChannel : SlaveNodeServer.slaveClientChannels) {
+                log.info("slaveClientChannels size = " + Server.slaveClientChannels.size());
+                for (Channel slaveChannel : Server.slaveClientChannels) {
                     ElectionPOJO.Election.Builder msgSend = ElectionPOJO.Election.newBuilder()
                             .setType(Consts.MSG_TYPE_ELECTION_MASTER)
                             .setTerm(Election.term)
@@ -57,16 +54,16 @@ public class ElectionNettyClientHandler extends ChannelInboundHandlerAdapter {
             }
         } else if (type == Consts.MSG_TYPE_ELECTION_MASTER) {
             // 更新master信息
-            SlaveNodeServer.masterChannel = ctx.channel();
+            Server.masterChannel = ctx.channel();
             ElectionUtil.handleTypeMaster(ctx.channel(), election.getTerm(), election.getIndex());
         } else if (type == Consts.MSG_TYPE_HEARTBEAT) {
             // 保存slave的地址
-            ChannelUtil.storeSlaveAddress(ctx.channel(), SlaveNodeServer.slaveServerList, election.getPort());
+            ChannelUtil.storeSlaveAddress(ctx.channel(), Server.slaveServerList, election.getPort());
             // 发送heartbeat的ack，包括所有slave server的地址
-            MsgUtil.sendHeartbeatAck(ctx, SlaveNodeServer.slaveServerList, election.getPort());
+            MsgUtil.sendHeartbeatAck(ctx, Server.slaveServerList, election.getPort());
         } else if (type == Consts.MSG_TYPE_HEARTBEAT_ACK) {
             log.info("接收到最新的slave集群地址：" + election.getContent());
-            SlaveNodeServer.otherSlaveAddrs = election.getContent();
+            Server.otherSlaveAddrs = election.getContent();
         } else if (type == Consts.MSG_TYPE_LOG_INDEX_COPY_REQUEST) {
             Map<String, Integer> msgMapMap = election.getMsgMapMap();
             ElectionUtil.handleTypeLogIndexCopyRequest(ctx.channel(), msgMapMap);

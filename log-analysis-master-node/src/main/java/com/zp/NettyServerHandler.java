@@ -1,9 +1,12 @@
 package com.zp;
 
 import com.zp.constrants.Consts;
+import com.zp.entity.Server;
 import com.zp.protobuf.MsgPOJO;
 import com.zp.utils.ChannelUtil;
+import com.zp.utils.ElectionUtil;
 import com.zp.utils.MsgUtil;
+import com.zp.utils.ThreadUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -12,9 +15,7 @@ import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -38,6 +39,12 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
     private static Set<String> slaveServerList = new HashSet<>();
 
     @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        // 开始选举
+        ElectionUtil.startElection(ctx.channel(), Server.port);
+    }
+
+    @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         MsgPOJO.Msg msgRsrv = (MsgPOJO.Msg) msg;
         // 消息内容
@@ -49,13 +56,24 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         int msgType = msgRsrv.getType();
         // projectId
         String projectId = msgRsrv.getProjectId();
+        boolean isLeader = msgRsrv.getIsLeader();
         log.info("客户端消息：" + msg);
         log.info("客户端地址：" + ctx.channel().remoteAddress());
         MsgPOJO.Msg.Builder builder = MsgPOJO.Msg.newBuilder();
         MsgPOJO.Msg.Builder msgSend = null;
         if (msgType == Consts.MSG_TYPE_HEARTBEAT) {
-            // 发送heartbeat的ack，包括所有slave server的地址
-            MsgUtil.sendHeartbeatAck(ctx, slaveServerList, msgRsrv.getPort());
+            if (isLeader) {
+                // 对方是leader时，代表自己是老master重连，给新master发送心跳
+                Server.masterChannel = ctx.channel();
+                ThreadUtil.startHeartbeatThread();
+            } else {
+                // 发送heartbeat的ack，包括所有slave server的地址
+                MsgUtil.sendHeartbeatAck(ctx, slaveServerList, msgRsrv.getPort());
+            }
+        } else if (msgType == Consts.MSG_TYPE_HEARTBEAT_ACK) {
+            log.info("接收到最新的slave集群地址：" + msgContent);
+            Server.otherSlaveAddrs = msgContent;
+
         } else if (msgType == Consts.MSG_TYPE_ACTIVE_SLAVE) {
             log.info("slave：" + ctx.channel().remoteAddress() + " is connected");
             channelGroup.add(ctx.channel());

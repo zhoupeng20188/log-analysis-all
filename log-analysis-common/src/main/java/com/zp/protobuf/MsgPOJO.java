@@ -88,13 +88,23 @@ public final class MsgPOJO {
 
     /**
      * <pre>
-     * 正在连接的客户端端口
+     * 正在连接的客户端的server端口
      * </pre>
      *
      * <code>int32 port = 6;</code>
      * @return The port.
      */
     int getPort();
+
+    /**
+     * <pre>
+     * 对方是否是leader
+     * </pre>
+     *
+     * <code>bool isLeader = 7;</code>
+     * @return The isLeader.
+     */
+    boolean getIsLeader();
   }
   /**
    * <pre>
@@ -177,6 +187,11 @@ public final class MsgPOJO {
             case 48: {
 
               port_ = input.readInt32();
+              break;
+            }
+            case 56: {
+
+              isLeader_ = input.readBool();
               break;
             }
             default: {
@@ -352,7 +367,7 @@ public final class MsgPOJO {
     private int port_;
     /**
      * <pre>
-     * 正在连接的客户端端口
+     * 正在连接的客户端的server端口
      * </pre>
      *
      * <code>int32 port = 6;</code>
@@ -361,6 +376,21 @@ public final class MsgPOJO {
     @Override
     public int getPort() {
       return port_;
+    }
+
+    public static final int ISLEADER_FIELD_NUMBER = 7;
+    private boolean isLeader_;
+    /**
+     * <pre>
+     * 对方是否是leader
+     * </pre>
+     *
+     * <code>bool isLeader = 7;</code>
+     * @return The isLeader.
+     */
+    @Override
+    public boolean getIsLeader() {
+      return isLeader_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -395,6 +425,9 @@ public final class MsgPOJO {
       if (port_ != 0) {
         output.writeInt32(6, port_);
       }
+      if (isLeader_ != false) {
+        output.writeBool(7, isLeader_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -426,6 +459,10 @@ public final class MsgPOJO {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(6, port_);
       }
+      if (isLeader_ != false) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(7, isLeader_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -453,6 +490,8 @@ public final class MsgPOJO {
           .equals(other.getContent())) return false;
       if (getPort()
           != other.getPort()) return false;
+      if (getIsLeader()
+          != other.getIsLeader()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -477,6 +516,9 @@ public final class MsgPOJO {
       hash = (53 * hash) + getContent().hashCode();
       hash = (37 * hash) + PORT_FIELD_NUMBER;
       hash = (53 * hash) + getPort();
+      hash = (37 * hash) + ISLEADER_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+          getIsLeader());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -626,6 +668,8 @@ public final class MsgPOJO {
 
         port_ = 0;
 
+        isLeader_ = false;
+
         return this;
       }
 
@@ -658,6 +702,7 @@ public final class MsgPOJO {
         result.projectId_ = projectId_;
         result.content_ = content_;
         result.port_ = port_;
+        result.isLeader_ = isLeader_;
         onBuilt();
         return result;
       }
@@ -725,6 +770,9 @@ public final class MsgPOJO {
         }
         if (other.getPort() != 0) {
           setPort(other.getPort());
+        }
+        if (other.getIsLeader() != false) {
+          setIsLeader(other.getIsLeader());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -1079,7 +1127,7 @@ public final class MsgPOJO {
       private int port_ ;
       /**
        * <pre>
-       * 正在连接的客户端端口
+       * 正在连接的客户端的server端口
        * </pre>
        *
        * <code>int32 port = 6;</code>
@@ -1091,7 +1139,7 @@ public final class MsgPOJO {
       }
       /**
        * <pre>
-       * 正在连接的客户端端口
+       * 正在连接的客户端的server端口
        * </pre>
        *
        * <code>int32 port = 6;</code>
@@ -1106,7 +1154,7 @@ public final class MsgPOJO {
       }
       /**
        * <pre>
-       * 正在连接的客户端端口
+       * 正在连接的客户端的server端口
        * </pre>
        *
        * <code>int32 port = 6;</code>
@@ -1115,6 +1163,49 @@ public final class MsgPOJO {
       public Builder clearPort() {
         
         port_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private boolean isLeader_ ;
+      /**
+       * <pre>
+       * 对方是否是leader
+       * </pre>
+       *
+       * <code>bool isLeader = 7;</code>
+       * @return The isLeader.
+       */
+      @Override
+      public boolean getIsLeader() {
+        return isLeader_;
+      }
+      /**
+       * <pre>
+       * 对方是否是leader
+       * </pre>
+       *
+       * <code>bool isLeader = 7;</code>
+       * @param value The isLeader to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsLeader(boolean value) {
+        
+        isLeader_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 对方是否是leader
+       * </pre>
+       *
+       * <code>bool isLeader = 7;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearIsLeader() {
+        
+        isLeader_ = false;
         onChanged();
         return this;
       }
@@ -1185,10 +1276,10 @@ public final class MsgPOJO {
       descriptor;
   static {
     String[] descriptorData = {
-      "\n\tMsg.proto\"c\n\003Msg\022\r\n\005msgId\030\001 \001(\003\022\014\n\004typ" +
+      "\n\tMsg.proto\"u\n\003Msg\022\r\n\005msgId\030\001 \001(\003\022\014\n\004typ" +
       "e\030\002 \001(\005\022\r\n\005index\030\003 \001(\005\022\021\n\tprojectId\030\004 \001(" +
-      "\t\022\017\n\007content\030\005 \001(\t\022\014\n\004port\030\006 \001(\005B\tB\007MsgP" +
-      "OJOb\006proto3"
+      "\t\022\017\n\007content\030\005 \001(\t\022\014\n\004port\030\006 \001(\005\022\020\n\010isLe" +
+      "ader\030\007 \001(\010B\tB\007MsgPOJOb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -1199,7 +1290,7 @@ public final class MsgPOJO {
     internal_static_Msg_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_Msg_descriptor,
-        new String[] { "MsgId", "Type", "Index", "ProjectId", "Content", "Port", });
+        new String[] { "MsgId", "Type", "Index", "ProjectId", "Content", "Port", "IsLeader", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

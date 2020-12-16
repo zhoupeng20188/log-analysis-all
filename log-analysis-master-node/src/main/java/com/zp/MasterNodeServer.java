@@ -1,5 +1,6 @@
 package com.zp;
 
+import com.zp.entity.Server;
 import com.zp.protobuf.MsgPOJO;
 import com.zp.utils.MsgUtil;
 import io.netty.bootstrap.ServerBootstrap;
@@ -21,11 +22,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MasterNodeServer {
     private int masterId;
-    private int port;
 
-    public MasterNodeServer(int masterId, int port) {
+    public MasterNodeServer(int masterId) {
         this.masterId = masterId;
-        this.port = port;
     }
 
     public int getMasterId() {
@@ -34,14 +33,6 @@ public class MasterNodeServer {
 
     public void setMasterId(int masterId) {
         this.masterId = masterId;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
     }
 
     public void start(){
@@ -75,7 +66,7 @@ public class MasterNodeServer {
 
             log.info("master node-" + masterId + " is ready...");
             // 启动服务器
-            ChannelFuture channelFuture = serverBootstrap.bind(port).sync();
+            ChannelFuture channelFuture = serverBootstrap.bind(Server.port).sync();
             // 对关闭通道进行监听
             channelFuture.channel().closeFuture().sync();
         } catch (Exception e) {

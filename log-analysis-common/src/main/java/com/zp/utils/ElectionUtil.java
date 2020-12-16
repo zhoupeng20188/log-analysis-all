@@ -4,9 +4,21 @@ import com.google.protobuf.ByteString;
 import com.zp.constrants.Consts;
 import com.zp.entity.Election;
 import com.zp.entity.ProjectMsg;
+import com.zp.entity.Server;
+import com.zp.handler.ElectionNettyClientHandler;
 import com.zp.meta.MetaData;
 import com.zp.protobuf.ElectionPOJO;
+import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.protobuf.ProtobufDecoder;
+import io.netty.handler.codec.protobuf.ProtobufEncoder;
+import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
+import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -21,6 +33,60 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @Slf4j
 public class ElectionUtil {
+
+    public static void startElection(Channel channel,
+                                     int localPort){
+        log.info("master："+ channel.remoteAddress() + " is down");
+        int sleepTime = RandomUtil.electRandom();
+        log.info("preparing to elect new leader,sleepTIme=" + sleepTime + "ms");
+        try {
+            Thread.sleep(sleepTime);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        // 选举轮次+1
+        Election.id++;
+        Election.port = localPort;
+        // 先投自己一票
+        Election.voteCnt++;
+        // 发送投票请求给其它slave
+        String[] slaveAddr = Server.otherSlaveAddrs.split(",");
+        for (String s : slaveAddr) {
+            String[] split = s.split(":");
+            String ip = split[0];
+            String port = split[1];
+            startNettyClient(ip, port);
+        }
+    }
+
+    public static void startNettyClient(String ip, String port) {
+        NioEventLoopGroup nioEventLoopGroup = new NioEventLoopGroup();
+        Bootstrap bootstrap = new Bootstrap();
+        try {
+            bootstrap.group(nioEventLoopGroup)
+                    .channel(NioSocketChannel.class)
+                    .handler(new ChannelInitializer<SocketChannel>() {
+                        @Override
+                        protected void initChannel(SocketChannel socketChannel) throws Exception {
+                            //配置Protobuf编码工具ProtobufVarint32LengthFieldPrepender与ProtobufEncoder
+                            socketChannel.pipeline().addLast(new ProtobufVarint32LengthFieldPrepender());
+                            socketChannel.pipeline().addLast(new ProtobufEncoder());
+                            //配置Protobuf解码工具ProtobufVarint32FrameDecoder与ProtobufDecoder
+                            socketChannel.pipeline().addLast(new ProtobufVarint32FrameDecoder());
+                            socketChannel.pipeline().addLast(new ProtobufDecoder(ElectionPOJO.Election.getDefaultInstance()));
+                            socketChannel.pipeline().addLast(new ElectionNettyClientHandler());
+                        }
+                    });
+            // 客户端连接服务端
+            ChannelFuture channelFuture = bootstrap.connect(ip, Integer.parseInt(port));
+            // 保存其它slave的channel
+            ChannelUtil.storeChannel(Server.slaveClientChannels, Server.slaveChannelMap, channelFuture.channel());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void handleTypeMaster(Channel channel,
                                         int term,
                                         int index) {

@@ -1,5 +1,6 @@
 package com.zp;
 
+import com.zp.entity.Server;
 import com.zp.utils.ServerUtil;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -22,7 +23,8 @@ public class MasterNodeStartup {
             System.exit(-1);
 //            return null;
         }
-        new MasterNodeServer(1, 9527).start();
+        Server.port = 9527;
+        new MasterNodeServer(1).start();
     }
 
     public static Options buildCommandlineOptions(final Options options) {

@@ -1,23 +1,12 @@
 package com.zp.slave;
 
 import com.zp.constrants.Consts;
-import com.zp.entity.Election;
-import com.zp.meta.MetaData;
-import com.zp.protobuf.ElectionPOJO;
+import com.zp.entity.Server;
 import com.zp.protobuf.MsgPOJO;
-import com.zp.utils.ChannelUtil;
-import com.zp.utils.MetaDataUtil;
+import com.zp.utils.ElectionUtil;
 import com.zp.utils.MsgUtil;
-import com.zp.utils.RandomUtil;
-import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.*;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.protobuf.ProtobufDecoder;
-import io.netty.handler.codec.protobuf.ProtobufEncoder;
-import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
-import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -46,51 +35,8 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        log.info("master："+ ctx.channel().remoteAddress() + " is down");
-        int sleepTime = RandomUtil.electRandom();
-        log.info("preparing to elect new leader,sleepTIme=" + sleepTime + "ms");
-        Thread.sleep(sleepTime);
-        // 选举轮次+1
-        Election.id++;
-        Election.port = port;
-        // 先投自己一票
-        Election.voteCnt++;
-        // 发送投票请求给其它slave
-        String[] slaveAddr = SlaveNodeServer.otherSlaveAddrs.split(",");
-        for (String s : slaveAddr) {
-            String[] split = s.split(":");
-            String ip = split[0];
-            String port = split[1];
-            startNettyClient(ip, port);
-        }
-    }
-
-    public void startNettyClient(String ip, String port) {
-        NioEventLoopGroup nioEventLoopGroup = new NioEventLoopGroup();
-        Bootstrap bootstrap = new Bootstrap();
-        try {
-            bootstrap.group(nioEventLoopGroup)
-                    .channel(NioSocketChannel.class)
-                    .handler(new ChannelInitializer<SocketChannel>() {
-                        @Override
-                        protected void initChannel(SocketChannel socketChannel) throws Exception {
-                            //配置Protobuf编码工具ProtobufVarint32LengthFieldPrepender与ProtobufEncoder
-                            socketChannel.pipeline().addLast(new ProtobufVarint32LengthFieldPrepender());
-                            socketChannel.pipeline().addLast(new ProtobufEncoder());
-                            //配置Protobuf解码工具ProtobufVarint32FrameDecoder与ProtobufDecoder
-                            socketChannel.pipeline().addLast(new ProtobufVarint32FrameDecoder());
-                            socketChannel.pipeline().addLast(new ProtobufDecoder(ElectionPOJO.Election.getDefaultInstance()));
-                            socketChannel.pipeline().addLast(new ElectionNettyClientHandler());
-                        }
-                    });
-            // 客户端连接服务端
-            ChannelFuture channelFuture = bootstrap.connect(ip, Integer.parseInt(port));
-            // 保存其它slave的channel
-            ChannelUtil.storeChannel(SlaveNodeServer.slaveClientChannels, SlaveNodeServer.slaveChannelMap, channelFuture.channel());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // 开始选举
+        ElectionUtil.startElection(ctx.channel(), port);
     }
 
     @Override
@@ -108,7 +54,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         log.info("master node地址：" + ctx.channel().remoteAddress());
         if (msgType == Consts.MSG_TYPE_HEARTBEAT_ACK) {
             log.info("接收到最新的slave集群地址：" + msgContent);
-            SlaveNodeServer.otherSlaveAddrs = msgContent;
+            Server.otherSlaveAddrs = msgContent;
 
         } else if (msgType == Consts.MSG_TYPE_UNCOMMITED) {
             log.info("接收到master的uncommited请求！");

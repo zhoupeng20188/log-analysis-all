@@ -1,13 +1,18 @@
 package com.zp.slave;
 
-import com.zp.constrants.Consts;
-import com.zp.entity.Election;
+import com.zp.entity.Server;
+import com.zp.handler.ElectionNettyServerHandler;
 import com.zp.protobuf.ElectionPOJO;
 import com.zp.protobuf.MsgPOJO;
 import com.zp.utils.MsgUtil;
+import com.zp.utils.NettyUtil;
+import com.zp.utils.ThreadUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.*;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -18,39 +23,20 @@ import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 /**
  * @Author zp
  * @create 2020/12/9 14:20
  */
 @Slf4j
 public class SlaveNodeServer {
-    public static volatile Channel masterChannel;
-    public static volatile String otherSlaveAddrs;
-    public static volatile Set<Channel> slaveClientChannels = new HashSet<>();
-    public static volatile HashMap<String, Channel> slaveChannelMap = new HashMap<>();
-    public static volatile Set<String> slaveServerList = new HashSet<>();
     private int slaveId;
     private String serverAddr;
     private int serverPort;
-    private int port;
 
-    public SlaveNodeServer(int slaveId, String serverAddr, int serverPort, int port) {
+    public SlaveNodeServer(int slaveId, String serverAddr, int serverPort) {
         this.slaveId = slaveId;
         this.serverAddr = serverAddr;
         this.serverPort = serverPort;
-        this.port = port;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
     }
 
     public int getSlaveId() {
@@ -80,25 +66,9 @@ public class SlaveNodeServer {
     public void start() {
         // 启动时加载index到内存中
         MsgUtil.initIndex();
-        startNettyClient();
-        startHeartbeatThread();
+        NettyUtil.startNettyClient(new NettyServerHandler(Server.port), serverAddr, serverPort);
+        ThreadUtil.startHeartbeatThread(new NettyServerHandler(Server.port), serverAddr, serverPort);
         startNettyServer();
-    }
-
-    private void startHeartbeatThread() {
-        Executors.newSingleThreadScheduledExecutor()
-                .scheduleAtFixedRate(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (!Election.isLeader) {
-                            MsgPOJO.Msg.Builder msgSend = MsgPOJO.Msg.newBuilder()
-                                    .setType(Consts.MSG_TYPE_HEARTBEAT)
-                                    .setPort(port);
-                            masterChannel.writeAndFlush(msgSend);
-                            log.info("send heartbeat to master node：" + masterChannel.remoteAddress());
-                        }
-                    }
-                }, 10, 10, TimeUnit.SECONDS);
     }
 
     public void startNettyClient() {
@@ -112,14 +82,14 @@ public class SlaveNodeServer {
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             socketChannel.pipeline().addLast(new ProtobufEncoder());
                             socketChannel.pipeline().addLast(new ProtobufDecoder(MsgPOJO.Msg.getDefaultInstance()));
-                            socketChannel.pipeline().addLast(new NettyServerHandler(port));
+                            socketChannel.pipeline().addLast(new NettyServerHandler(Server.port));
                         }
                     });
             log.info("slave node-" + slaveId + " is started...");
             // 客户端连接服务端
             ChannelFuture channelFuture = bootstrap.connect(serverAddr, serverPort);
 
-            masterChannel = channelFuture.channel();
+            Server.masterChannel = channelFuture.channel();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -155,7 +125,7 @@ public class SlaveNodeServer {
 
             log.info("slave node server started");
             // 启动服务器
-            ChannelFuture channelFuture = serverBootstrap.bind(port).sync();
+            ChannelFuture channelFuture = serverBootstrap.bind(Server.port).sync();
             // 对关闭通道进行监听
             channelFuture.channel().closeFuture().sync();
         } catch (Exception e) {
