@@ -39,7 +39,7 @@ public class NettyUtil {
             ChannelFuture channelFuture = bootstrap.connect(serverAddr, serverPort);
 
             Server.masterChannel = channelFuture.channel();
-            log.info("slave node-" + Server.id + " is started...");
+            log.info("slave node-{} is started...", Server.id);
 
         } catch (Exception e) {
             e.printStackTrace();

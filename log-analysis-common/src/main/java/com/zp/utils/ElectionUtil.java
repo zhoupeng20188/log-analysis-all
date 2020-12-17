@@ -36,9 +36,9 @@ public class ElectionUtil {
 
     public static void startElection(Channel channel,
                                      int localPort){
-        log.info("master："+ channel.remoteAddress() + " is down");
+        log.info("master：{} is down", channel.remoteAddress() + "");
         int sleepTime = RandomUtil.electRandom();
-        log.info("preparing to elect new leader,sleepTIme=" + sleepTime + "ms");
+        log.info("preparing to elect new leader,sleepTIme={}ms", sleepTime);
         try {
             Thread.sleep(sleepTime);
         } catch (InterruptedException e) {
@@ -93,7 +93,7 @@ public class ElectionUtil {
                                         int term,
                                         int index) {
         // 更新master信息
-        log.info("更新master node 为" + channel.remoteAddress());
+        log.info("更新master node 为{}", channel.remoteAddress());
         // 更新term
         Election.term = term;
         HashMap<String, Integer> msgMap = new HashMap<>();
@@ -219,6 +219,6 @@ public class ElectionUtil {
         // 将文件内容填充到内存中
         MsgUtil.initIndex(true);
 
-        log.info("master's log data is copied to local。new commitedIndex is " + index);
+        log.info("master's log data is copied to local。new commitedIndex is {}", index);
     }
 }

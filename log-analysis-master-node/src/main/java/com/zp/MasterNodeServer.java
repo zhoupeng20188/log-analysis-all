@@ -35,7 +35,7 @@ public class MasterNodeServer {
         this.masterId = masterId;
     }
 
-    public void start(){
+    public void start() {
         // 启动时加载index到内存中
         MsgUtil.initIndex();
         startNettyServer();
@@ -43,12 +43,12 @@ public class MasterNodeServer {
 
     public void startNettyServer() {
         try {
-        // 默认个数为cpu核心数*2
-        EventLoopGroup bossGroup = new NioEventLoopGroup(2);
-        // 默认个数为cpu核心数*2
-        EventLoopGroup workerGroup = new NioEventLoopGroup(2);
+            // 默认个数为cpu核心数*2
+            EventLoopGroup bossGroup = new NioEventLoopGroup(2);
+            // 默认个数为cpu核心数*2
+            EventLoopGroup workerGroup = new NioEventLoopGroup(2);
 
-        ServerBootstrap serverBootstrap = new ServerBootstrap();
+            ServerBootstrap serverBootstrap = new ServerBootstrap();
 
             serverBootstrap.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
@@ -64,7 +64,7 @@ public class MasterNodeServer {
                         }
                     });
 
-            log.info("master node-" + masterId + " is ready...");
+            log.info("master node-{} is ready...", masterId);
             // 启动服务器
             ChannelFuture channelFuture = serverBootstrap.bind(Server.port).sync();
             // 对关闭通道进行监听

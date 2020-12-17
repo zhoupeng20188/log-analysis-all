@@ -108,7 +108,7 @@ public class LogAnalysisClient {
                             socketChannel.pipeline().addLast(new ProtobufEncoder());
                         }
                     });
-            log.info("log-analysis-client is started...");
+            log.info("log-analysis-client is started");
             // 客户端连接服务端
             ChannelFuture channelFuture = bootstrap.connect(serverAddr, serverPort);
 

@@ -33,7 +33,7 @@ public class ThreadUtil {
                                         .setPort(Server.port)
                                         .setIsLeader(Election.isLeader);
                                 Server.masterChannel.writeAndFlush(msgSend);
-                                log.info("send heartbeat to master node：" + Server.masterChannel.remoteAddress());
+                                log.debug("send heartbeat to master node：{}", Server.masterChannel.remoteAddress());
                             } else {
                                 // 重连老master
 //                            final EventLoop eventLoop = Server.masterChannel.eventLoop();
