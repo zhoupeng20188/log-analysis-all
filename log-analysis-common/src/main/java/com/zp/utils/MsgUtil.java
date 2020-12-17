@@ -158,7 +158,7 @@ public class MsgUtil {
             remoteAddress = remoteAddress.substring(0, remoteAddress.length() - 1);
         }
 
-        log.debug("准备返回slave集群地址：{}", remoteAddress);
+        log.debug("prepare to send back slave cluster address：{}", remoteAddress);
 
         MsgPOJO.Msg.Builder msgSend = MsgPOJO.Msg.newBuilder()
                 .setType(Consts.MSG_TYPE_HEARTBEAT_ACK)
@@ -181,7 +181,7 @@ public class MsgUtil {
         boolean isLeader = msgRsrv.getIsLeader();
         boolean isOldLeader = msgRsrv.getIsOldLeader();
         int port = msgRsrv.getPort();
-        log.debug("接收到消息：", msg);
+        log.debug("receive message：", msg);
         MsgPOJO.Msg.Builder builder = MsgPOJO.Msg.newBuilder();
         MsgPOJO.Msg.Builder msgSend = null;
         if (msgType == Consts.MSG_TYPE_HEARTBEAT) {
@@ -190,7 +190,7 @@ public class MsgUtil {
                 Server.masterChannel = ctx.channel();
                 SocketAddress socketAddress = ctx.channel().remoteAddress();
                 String[] split = String.valueOf(socketAddress).replace("/", "").split(":");
-                log.debug("收到新master的连接，准备发送心跳到新master.");
+                log.debug("receive from  new master's connection, prepare to send heartbeat to new master...");
                 ThreadUtil.startHeartbeatThread(split[0], Integer.parseInt(split[1]));
                 // 更新master状态
                 Election.isLeader = false;
@@ -206,11 +206,11 @@ public class MsgUtil {
             if (!isLeader) {
                 Election.stopHeartbeat = true;
             } else {
-                log.debug("接收到最新的slave集群地址：{}", msgContent);
+                log.debug("receive from latest slave cluster address(exclude self)：{}", msgContent);
                 Server.otherSlaveAddrs = msgContent;
             }
         } else if (msgType == Consts.MSG_TYPE_UNCOMMITED) {
-            log.info("接收到master的uncommited请求！");
+            log.info("receive from master's uncommited request!");
             // 本地存储消息
             MsgUtil.storeMsg(msgContent, msgId, projectId);
             // 给master发送ACK消息
@@ -221,11 +221,11 @@ public class MsgUtil {
                     .setContent(msgContent);
             ctx.channel().writeAndFlush(msgSend);
         } else if (msgType == Consts.MSG_TYPE_COMMITED) {
-            log.info("接收到master的commited请求！");
+            log.info("receive from master's commited request!");
             // 修改本地状态为commited
             MsgUtil.changeToCommited(projectId, msgId);
         } else if (msgType == Consts.MSG_TYPE_UNCOMMITED_ACK) {
-            log.info("接收到slave：{}的ack", ctx.channel().remoteAddress());
+            log.info("receive from slave：{} 's ack", ctx.channel().remoteAddress());
             int ackCnt = 0;
             if (Server.ackMap.get(msgId) != null) {
                 ackCnt = Server.ackMap.get(msgId) + 1;
@@ -235,7 +235,7 @@ public class MsgUtil {
             Server.ackMap.put(msgId, ackCnt);
             if (ackCnt >= Server.slaveClientChannels.size() / 2 + 1) {
                 // 修改本地状态为commited
-                log.info("接收到超过半数的ack！成功写入！");
+                log.info("receive from over half slave's ack！write success！");
                 MsgUtil.changeToCommited(projectId, msgId);
                 // 发送commited请求给自己的slave
                 for (Channel channel : Server.slaveClientChannels) {
@@ -249,7 +249,7 @@ public class MsgUtil {
             }
 
         } else if (msgType == Consts.MSG_TYPE_CLIENT) {
-            log.info("接收到客户端的请求！准备写入！");
+            log.debug("receive from client's request! prepare to write log!");
             // 本地存储消息
             MsgUtil.storeMsg(msgContent, msgId, projectId);
 
@@ -268,7 +268,7 @@ public class MsgUtil {
             // 消息index
             int index = msgRsrv.getIndex();
             int term = msgRsrv.getTerm();
-            log.info("接收到slave的投票请求，当前term:{},index:{}", Election.term, MetaData.globalCommitedIndex.get());
+            log.info("receive from slave's vote request, now term:{},index:{}", Election.term, MetaData.globalCommitedIndex.get());
             if (Election.id <= electionId
                     && Election.term <= term
                     && MetaData.globalCommitedIndex.get() <= index
@@ -283,21 +283,21 @@ public class MsgUtil {
 
         } else if (msgType == Consts.MSG_TYPE_ELECTION_ACK) {
             Election.voteCnt++;
-            log.info("接收到salve：{}的投票结果：{}", ctx.channel().remoteAddress(), msgRsrv.getVoteResult());
+            log.info("receive from salve：{} 's vote result：{}", ctx.channel().remoteAddress(), msgRsrv.getVoteResult());
             if (Election.voteCnt >= Election.slaveNum / 2 + 1) {
                 Election.isLeader = true;
                 // 纪元+1
                 Election.term++;
-                log.info("slave：{}成为 master! term ={}", Election.port, Election.term);
+                log.info("slave：{} becoming to master! term ={}", Election.port, Election.term);
                 // 向其它slave发送成为master的消息
-                log.info("slaveClientChannels size = {}", Server.slaveClientChannels.size());
+                log.debug("slaveClientChannels size = {}", Server.slaveClientChannels.size());
                 for (Channel slaveChannel : Server.slaveClientChannels) {
                     msgSend = builder
                             .setType(Consts.MSG_TYPE_ELECTION_MASTER)
                             .setTerm(Election.term)
                             .setIndex(MetaData.globalCommitedIndex.get())
                             .setElectionId(Election.id);
-                    log.info("向slave：{}发送成为master的消息", slaveChannel.remoteAddress());
+                    log.info("send becoming to master 's message to slave：{}", slaveChannel.remoteAddress());
                     slaveChannel.writeAndFlush(msgSend);
                 }
             }
@@ -315,7 +315,7 @@ public class MsgUtil {
                 Server.masterChannel = ctx.channel();
                 SocketAddress socketAddress = ctx.channel().remoteAddress();
                 String[] split = String.valueOf(socketAddress).replace("/", "").split(":");
-                log.debug("收到新master的连接，准备发送心跳到新master.");
+                log.debug("receive from new master's connection, prepare to send heartbeat to new master..");
                 // 更新master状态
                 Election.isLeader = false;
                 Election.isOldLeader = true;

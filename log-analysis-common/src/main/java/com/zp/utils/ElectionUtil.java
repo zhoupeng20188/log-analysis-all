@@ -93,7 +93,7 @@ public class ElectionUtil {
                                         int term,
                                         int index) {
         // 更新master信息
-        log.info("更新master node 为{}", channel.remoteAddress());
+        log.info("change master node to {}", channel.remoteAddress());
         // 更新term
         Election.term = term;
         HashMap<String, Integer> msgMap = new HashMap<>();
