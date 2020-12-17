@@ -7,7 +7,6 @@ import com.zp.entity.ProjectMsg;
 import com.zp.entity.Server;
 import com.zp.handler.ElectionNettyClientHandler;
 import com.zp.meta.MetaData;
-import com.zp.protobuf.ElectionPOJO;
 import com.zp.protobuf.MsgPOJO;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;

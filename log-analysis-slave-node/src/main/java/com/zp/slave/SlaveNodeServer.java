@@ -3,12 +3,10 @@ package com.zp.slave;
 import com.zp.entity.Server;
 import com.zp.handler.ElectionNettyServerHandler;
 import com.zp.handler.NettyClientHandler;
-import com.zp.protobuf.ElectionPOJO;
 import com.zp.protobuf.MsgPOJO;
 import com.zp.utils.MsgUtil;
 import com.zp.utils.NettyUtil;
 import com.zp.utils.ThreadUtil;
-import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -17,7 +15,6 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
@@ -94,7 +91,6 @@ public class SlaveNodeServer {
                             socketChannel.pipeline().addLast(new ProtobufEncoder());
                             //配置Protobuf解码工具ProtobufVarint32FrameDecoder与ProtobufDecoder
                             socketChannel.pipeline().addLast(new ProtobufVarint32FrameDecoder());
-//                            socketChannel.pipeline().addLast(new ProtobufDecoder(ElectionPOJO.Election.getDefaultInstance()));
                             socketChannel.pipeline().addLast(new ProtobufDecoder(MsgPOJO.Msg.getDefaultInstance()));
                             socketChannel.pipeline().addLast(new ElectionNettyServerHandler());
                         }
