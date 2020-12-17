@@ -9,4 +9,13 @@ message Msg { // 会在MsgPOJO外部类中生成一个Msg内部类
     string content =5; // 内容
     int32 port =6; // 正在连接的客户端的server端口
     bool isLeader = 7; // 对方是否是leader
+    int32 ElectionId =8; // 选举的轮次
+    int32 voteResult =9; // 投票结果，1：通过，0：不通过
+    bytes indexMapLog = 10;
+    bytes msgMapLog = 11;
+    map<string, int32> msgMap = 12; // 同步日志用，key为projectId，value为commitedIndex
+    map<string, int32> logCopyIndexMap = 13; // key为projectId，value为各projectId日志中需要传输的增量的字节数
+    bytes logCopyBytes = 14; // 所有projectId需要传输的增加的字节数组
+    int32 term =15;
+    bool isOldLeader = 16; // 对方是否是老leader
 }

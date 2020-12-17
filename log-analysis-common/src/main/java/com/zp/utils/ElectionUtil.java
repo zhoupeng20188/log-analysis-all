@@ -8,6 +8,7 @@ import com.zp.entity.Server;
 import com.zp.handler.ElectionNettyClientHandler;
 import com.zp.meta.MetaData;
 import com.zp.protobuf.ElectionPOJO;
+import com.zp.protobuf.MsgPOJO;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -49,6 +50,7 @@ public class ElectionUtil {
         Election.port = localPort;
         // 先投自己一票
         Election.voteCnt++;
+        Election.stopHeartbeat = false;
         // 发送投票请求给其它slave
         String[] slaveAddr = Server.otherSlaveAddrs.split(",");
         for (String s : slaveAddr) {
@@ -73,7 +75,8 @@ public class ElectionUtil {
                             socketChannel.pipeline().addLast(new ProtobufEncoder());
                             //配置Protobuf解码工具ProtobufVarint32FrameDecoder与ProtobufDecoder
                             socketChannel.pipeline().addLast(new ProtobufVarint32FrameDecoder());
-                            socketChannel.pipeline().addLast(new ProtobufDecoder(ElectionPOJO.Election.getDefaultInstance()));
+//                            socketChannel.pipeline().addLast(new ProtobufDecoder(ElectionPOJO.Election.getDefaultInstance()));
+                            socketChannel.pipeline().addLast(new ProtobufDecoder(MsgPOJO.Msg.getDefaultInstance()));
                             socketChannel.pipeline().addLast(new ElectionNettyClientHandler());
                         }
                     });
@@ -100,7 +103,8 @@ public class ElectionUtil {
         }
         if (MetaData.globalCommitedIndex.get() < index) {
             // 发起获取日志同步请求
-            ElectionPOJO.Election.Builder msgSend = ElectionPOJO.Election.newBuilder()
+//            ElectionPOJO.Election.Builder msgSend = ElectionPOJO.Election.newBuilder()
+            MsgPOJO.Msg.Builder msgSend = MsgPOJO.Msg.newBuilder()
                     .setType(Consts.MSG_TYPE_LOG_INDEX_COPY_REQUEST)
                     .putAllMsgMap(msgMap);
             channel.writeAndFlush(msgSend);
@@ -167,7 +171,8 @@ public class ElectionUtil {
                 copyBytes = ByteUtil.appendToTail(bytes, copyBytes);
             }
         }
-        ElectionPOJO.Election.Builder msgSend = ElectionPOJO.Election.newBuilder()
+//        ElectionPOJO.Election.Builder msgSend = ElectionPOJO.Election.newBuilder()
+        MsgPOJO.Msg.Builder msgSend = MsgPOJO.Msg.newBuilder()
                 .setType(Consts.MSG_TYPE_LOG_COPY_DATA)
                 .setIndex(MetaData.globalCommitedIndex.get())
                 .setIndexMapLog(FileUtil.convertFileToByteString(new File(MetaData.fileDir + Consts.FILE_NAME_MSG_INDEX_MAP)))

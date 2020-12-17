@@ -105,6 +105,172 @@ public final class MsgPOJO {
      * @return The isLeader.
      */
     boolean getIsLeader();
+
+    /**
+     * <pre>
+     * 选举的轮次
+     * </pre>
+     *
+     * <code>int32 ElectionId = 8;</code>
+     * @return The electionId.
+     */
+    int getElectionId();
+
+    /**
+     * <pre>
+     * 投票结果，1：通过，0：不通过
+     * </pre>
+     *
+     * <code>int32 voteResult = 9;</code>
+     * @return The voteResult.
+     */
+    int getVoteResult();
+
+    /**
+     * <code>bytes indexMapLog = 10;</code>
+     * @return The indexMapLog.
+     */
+    com.google.protobuf.ByteString getIndexMapLog();
+
+    /**
+     * <code>bytes msgMapLog = 11;</code>
+     * @return The msgMapLog.
+     */
+    com.google.protobuf.ByteString getMsgMapLog();
+
+    /**
+     * <pre>
+     * 同步日志用，key为projectId，value为commitedIndex
+     * </pre>
+     *
+     * <code>map&lt;string, int32&gt; msgMap = 12;</code>
+     */
+    int getMsgMapCount();
+    /**
+     * <pre>
+     * 同步日志用，key为projectId，value为commitedIndex
+     * </pre>
+     *
+     * <code>map&lt;string, int32&gt; msgMap = 12;</code>
+     */
+    boolean containsMsgMap(
+            String key);
+    /**
+     * Use {@link #getMsgMapMap()} instead.
+     */
+    @Deprecated
+    java.util.Map<String, Integer>
+    getMsgMap();
+    /**
+     * <pre>
+     * 同步日志用，key为projectId，value为commitedIndex
+     * </pre>
+     *
+     * <code>map&lt;string, int32&gt; msgMap = 12;</code>
+     */
+    java.util.Map<String, Integer>
+    getMsgMapMap();
+    /**
+     * <pre>
+     * 同步日志用，key为projectId，value为commitedIndex
+     * </pre>
+     *
+     * <code>map&lt;string, int32&gt; msgMap = 12;</code>
+     */
+
+    int getMsgMapOrDefault(
+            String key,
+            int defaultValue);
+    /**
+     * <pre>
+     * 同步日志用，key为projectId，value为commitedIndex
+     * </pre>
+     *
+     * <code>map&lt;string, int32&gt; msgMap = 12;</code>
+     */
+
+    int getMsgMapOrThrow(
+            String key);
+
+    /**
+     * <pre>
+     * key为projectId，value为各projectId日志中需要传输的增量的字节数
+     * </pre>
+     *
+     * <code>map&lt;string, int32&gt; logCopyIndexMap = 13;</code>
+     */
+    int getLogCopyIndexMapCount();
+    /**
+     * <pre>
+     * key为projectId，value为各projectId日志中需要传输的增量的字节数
+     * </pre>
+     *
+     * <code>map&lt;string, int32&gt; logCopyIndexMap = 13;</code>
+     */
+    boolean containsLogCopyIndexMap(
+            String key);
+    /**
+     * Use {@link #getLogCopyIndexMapMap()} instead.
+     */
+    @Deprecated
+    java.util.Map<String, Integer>
+    getLogCopyIndexMap();
+    /**
+     * <pre>
+     * key为projectId，value为各projectId日志中需要传输的增量的字节数
+     * </pre>
+     *
+     * <code>map&lt;string, int32&gt; logCopyIndexMap = 13;</code>
+     */
+    java.util.Map<String, Integer>
+    getLogCopyIndexMapMap();
+    /**
+     * <pre>
+     * key为projectId，value为各projectId日志中需要传输的增量的字节数
+     * </pre>
+     *
+     * <code>map&lt;string, int32&gt; logCopyIndexMap = 13;</code>
+     */
+
+    int getLogCopyIndexMapOrDefault(
+            String key,
+            int defaultValue);
+    /**
+     * <pre>
+     * key为projectId，value为各projectId日志中需要传输的增量的字节数
+     * </pre>
+     *
+     * <code>map&lt;string, int32&gt; logCopyIndexMap = 13;</code>
+     */
+
+    int getLogCopyIndexMapOrThrow(
+            String key);
+
+    /**
+     * <pre>
+     * 所有projectId需要传输的增加的字节数组
+     * </pre>
+     *
+     * <code>bytes logCopyBytes = 14;</code>
+     * @return The logCopyBytes.
+     */
+    com.google.protobuf.ByteString getLogCopyBytes();
+
+    /**
+     * <code>int32 term = 15;</code>
+     * @return The term.
+     */
+    int getTerm();
+
+    /**
+     * <pre>
+     * 对方是否是老leader
+     * </pre>
+     *
+     * <code>bool isOldLeader = 16;</code>
+     * @return The isOldLeader.
+     */
+    boolean getIsOldLeader();
   }
   /**
    * <pre>
@@ -125,6 +291,9 @@ public final class MsgPOJO {
     private Msg() {
       projectId_ = "";
       content_ = "";
+      indexMapLog_ = com.google.protobuf.ByteString.EMPTY;
+      msgMapLog_ = com.google.protobuf.ByteString.EMPTY;
+      logCopyBytes_ = com.google.protobuf.ByteString.EMPTY;
     }
 
     @Override
@@ -147,6 +316,7 @@ public final class MsgPOJO {
       if (extensionRegistry == null) {
         throw new NullPointerException();
       }
+      int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
@@ -194,6 +364,67 @@ public final class MsgPOJO {
               isLeader_ = input.readBool();
               break;
             }
+            case 64: {
+
+              electionId_ = input.readInt32();
+              break;
+            }
+            case 72: {
+
+              voteResult_ = input.readInt32();
+              break;
+            }
+            case 82: {
+
+              indexMapLog_ = input.readBytes();
+              break;
+            }
+            case 90: {
+
+              msgMapLog_ = input.readBytes();
+              break;
+            }
+            case 98: {
+              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                msgMap_ = com.google.protobuf.MapField.newMapField(
+                    MsgMapDefaultEntryHolder.defaultEntry);
+                mutable_bitField0_ |= 0x00000001;
+              }
+              com.google.protobuf.MapEntry<String, Integer>
+              msgMap__ = input.readMessage(
+                  MsgMapDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
+              msgMap_.getMutableMap().put(
+                  msgMap__.getKey(), msgMap__.getValue());
+              break;
+            }
+            case 106: {
+              if (!((mutable_bitField0_ & 0x00000002) != 0)) {
+                logCopyIndexMap_ = com.google.protobuf.MapField.newMapField(
+                    LogCopyIndexMapDefaultEntryHolder.defaultEntry);
+                mutable_bitField0_ |= 0x00000002;
+              }
+              com.google.protobuf.MapEntry<String, Integer>
+              logCopyIndexMap__ = input.readMessage(
+                  LogCopyIndexMapDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
+              logCopyIndexMap_.getMutableMap().put(
+                  logCopyIndexMap__.getKey(), logCopyIndexMap__.getValue());
+              break;
+            }
+            case 114: {
+
+              logCopyBytes_ = input.readBytes();
+              break;
+            }
+            case 120: {
+
+              term_ = input.readInt32();
+              break;
+            }
+            case 128: {
+
+              isOldLeader_ = input.readBool();
+              break;
+            }
             default: {
               if (!parseUnknownField(
                   input, unknownFields, extensionRegistry, tag)) {
@@ -218,6 +449,20 @@ public final class MsgPOJO {
       return MsgPOJO.internal_static_Msg_descriptor;
     }
 
+    @SuppressWarnings({"rawtypes"})
+    @Override
+    protected com.google.protobuf.MapField internalGetMapField(
+        int number) {
+      switch (number) {
+        case 12:
+          return internalGetMsgMap();
+        case 13:
+          return internalGetLogCopyIndexMap();
+        default:
+          throw new RuntimeException(
+              "Invalid map field number: " + number);
+      }
+    }
     @Override
     protected FieldAccessorTable
         internalGetFieldAccessorTable() {
@@ -393,6 +638,293 @@ public final class MsgPOJO {
       return isLeader_;
     }
 
+    public static final int ELECTIONID_FIELD_NUMBER = 8;
+    private int electionId_;
+    /**
+     * <pre>
+     * 选举的轮次
+     * </pre>
+     *
+     * <code>int32 ElectionId = 8;</code>
+     * @return The electionId.
+     */
+    @Override
+    public int getElectionId() {
+      return electionId_;
+    }
+
+    public static final int VOTERESULT_FIELD_NUMBER = 9;
+    private int voteResult_;
+    /**
+     * <pre>
+     * 投票结果，1：通过，0：不通过
+     * </pre>
+     *
+     * <code>int32 voteResult = 9;</code>
+     * @return The voteResult.
+     */
+    @Override
+    public int getVoteResult() {
+      return voteResult_;
+    }
+
+    public static final int INDEXMAPLOG_FIELD_NUMBER = 10;
+    private com.google.protobuf.ByteString indexMapLog_;
+    /**
+     * <code>bytes indexMapLog = 10;</code>
+     * @return The indexMapLog.
+     */
+    @Override
+    public com.google.protobuf.ByteString getIndexMapLog() {
+      return indexMapLog_;
+    }
+
+    public static final int MSGMAPLOG_FIELD_NUMBER = 11;
+    private com.google.protobuf.ByteString msgMapLog_;
+    /**
+     * <code>bytes msgMapLog = 11;</code>
+     * @return The msgMapLog.
+     */
+    @Override
+    public com.google.protobuf.ByteString getMsgMapLog() {
+      return msgMapLog_;
+    }
+
+    public static final int MSGMAP_FIELD_NUMBER = 12;
+    private static final class MsgMapDefaultEntryHolder {
+      static final com.google.protobuf.MapEntry<
+          String, Integer> defaultEntry =
+              com.google.protobuf.MapEntry
+              .<String, Integer>newDefaultInstance(
+                  MsgPOJO.internal_static_Msg_MsgMapEntry_descriptor, 
+                  com.google.protobuf.WireFormat.FieldType.STRING,
+                  "",
+                  com.google.protobuf.WireFormat.FieldType.INT32,
+                  0);
+    }
+    private com.google.protobuf.MapField<
+        String, Integer> msgMap_;
+    private com.google.protobuf.MapField<String, Integer>
+    internalGetMsgMap() {
+      if (msgMap_ == null) {
+        return com.google.protobuf.MapField.emptyMapField(
+            MsgMapDefaultEntryHolder.defaultEntry);
+      }
+      return msgMap_;
+    }
+
+    public int getMsgMapCount() {
+      return internalGetMsgMap().getMap().size();
+    }
+    /**
+     * <pre>
+     * 同步日志用，key为projectId，value为commitedIndex
+     * </pre>
+     *
+     * <code>map&lt;string, int32&gt; msgMap = 12;</code>
+     */
+
+    @Override
+    public boolean containsMsgMap(
+        String key) {
+      if (key == null) { throw new NullPointerException(); }
+      return internalGetMsgMap().getMap().containsKey(key);
+    }
+    /**
+     * Use {@link #getMsgMapMap()} instead.
+     */
+    @Override
+    @Deprecated
+    public java.util.Map<String, Integer> getMsgMap() {
+      return getMsgMapMap();
+    }
+    /**
+     * <pre>
+     * 同步日志用，key为projectId，value为commitedIndex
+     * </pre>
+     *
+     * <code>map&lt;string, int32&gt; msgMap = 12;</code>
+     */
+    @Override
+
+    public java.util.Map<String, Integer> getMsgMapMap() {
+      return internalGetMsgMap().getMap();
+    }
+    /**
+     * <pre>
+     * 同步日志用，key为projectId，value为commitedIndex
+     * </pre>
+     *
+     * <code>map&lt;string, int32&gt; msgMap = 12;</code>
+     */
+    @Override
+
+    public int getMsgMapOrDefault(
+        String key,
+        int defaultValue) {
+      if (key == null) { throw new NullPointerException(); }
+      java.util.Map<String, Integer> map =
+          internalGetMsgMap().getMap();
+      return map.containsKey(key) ? map.get(key) : defaultValue;
+    }
+    /**
+     * <pre>
+     * 同步日志用，key为projectId，value为commitedIndex
+     * </pre>
+     *
+     * <code>map&lt;string, int32&gt; msgMap = 12;</code>
+     */
+    @Override
+
+    public int getMsgMapOrThrow(
+        String key) {
+      if (key == null) { throw new NullPointerException(); }
+      java.util.Map<String, Integer> map =
+          internalGetMsgMap().getMap();
+      if (!map.containsKey(key)) {
+        throw new IllegalArgumentException();
+      }
+      return map.get(key);
+    }
+
+    public static final int LOGCOPYINDEXMAP_FIELD_NUMBER = 13;
+    private static final class LogCopyIndexMapDefaultEntryHolder {
+      static final com.google.protobuf.MapEntry<
+          String, Integer> defaultEntry =
+              com.google.protobuf.MapEntry
+              .<String, Integer>newDefaultInstance(
+                  MsgPOJO.internal_static_Msg_LogCopyIndexMapEntry_descriptor, 
+                  com.google.protobuf.WireFormat.FieldType.STRING,
+                  "",
+                  com.google.protobuf.WireFormat.FieldType.INT32,
+                  0);
+    }
+    private com.google.protobuf.MapField<
+        String, Integer> logCopyIndexMap_;
+    private com.google.protobuf.MapField<String, Integer>
+    internalGetLogCopyIndexMap() {
+      if (logCopyIndexMap_ == null) {
+        return com.google.protobuf.MapField.emptyMapField(
+            LogCopyIndexMapDefaultEntryHolder.defaultEntry);
+      }
+      return logCopyIndexMap_;
+    }
+
+    public int getLogCopyIndexMapCount() {
+      return internalGetLogCopyIndexMap().getMap().size();
+    }
+    /**
+     * <pre>
+     * key为projectId，value为各projectId日志中需要传输的增量的字节数
+     * </pre>
+     *
+     * <code>map&lt;string, int32&gt; logCopyIndexMap = 13;</code>
+     */
+
+    @Override
+    public boolean containsLogCopyIndexMap(
+        String key) {
+      if (key == null) { throw new NullPointerException(); }
+      return internalGetLogCopyIndexMap().getMap().containsKey(key);
+    }
+    /**
+     * Use {@link #getLogCopyIndexMapMap()} instead.
+     */
+    @Override
+    @Deprecated
+    public java.util.Map<String, Integer> getLogCopyIndexMap() {
+      return getLogCopyIndexMapMap();
+    }
+    /**
+     * <pre>
+     * key为projectId，value为各projectId日志中需要传输的增量的字节数
+     * </pre>
+     *
+     * <code>map&lt;string, int32&gt; logCopyIndexMap = 13;</code>
+     */
+    @Override
+
+    public java.util.Map<String, Integer> getLogCopyIndexMapMap() {
+      return internalGetLogCopyIndexMap().getMap();
+    }
+    /**
+     * <pre>
+     * key为projectId，value为各projectId日志中需要传输的增量的字节数
+     * </pre>
+     *
+     * <code>map&lt;string, int32&gt; logCopyIndexMap = 13;</code>
+     */
+    @Override
+
+    public int getLogCopyIndexMapOrDefault(
+        String key,
+        int defaultValue) {
+      if (key == null) { throw new NullPointerException(); }
+      java.util.Map<String, Integer> map =
+          internalGetLogCopyIndexMap().getMap();
+      return map.containsKey(key) ? map.get(key) : defaultValue;
+    }
+    /**
+     * <pre>
+     * key为projectId，value为各projectId日志中需要传输的增量的字节数
+     * </pre>
+     *
+     * <code>map&lt;string, int32&gt; logCopyIndexMap = 13;</code>
+     */
+    @Override
+
+    public int getLogCopyIndexMapOrThrow(
+        String key) {
+      if (key == null) { throw new NullPointerException(); }
+      java.util.Map<String, Integer> map =
+          internalGetLogCopyIndexMap().getMap();
+      if (!map.containsKey(key)) {
+        throw new IllegalArgumentException();
+      }
+      return map.get(key);
+    }
+
+    public static final int LOGCOPYBYTES_FIELD_NUMBER = 14;
+    private com.google.protobuf.ByteString logCopyBytes_;
+    /**
+     * <pre>
+     * 所有projectId需要传输的增加的字节数组
+     * </pre>
+     *
+     * <code>bytes logCopyBytes = 14;</code>
+     * @return The logCopyBytes.
+     */
+    @Override
+    public com.google.protobuf.ByteString getLogCopyBytes() {
+      return logCopyBytes_;
+    }
+
+    public static final int TERM_FIELD_NUMBER = 15;
+    private int term_;
+    /**
+     * <code>int32 term = 15;</code>
+     * @return The term.
+     */
+    @Override
+    public int getTerm() {
+      return term_;
+    }
+
+    public static final int ISOLDLEADER_FIELD_NUMBER = 16;
+    private boolean isOldLeader_;
+    /**
+     * <pre>
+     * 对方是否是老leader
+     * </pre>
+     *
+     * <code>bool isOldLeader = 16;</code>
+     * @return The isOldLeader.
+     */
+    @Override
+    public boolean getIsOldLeader() {
+      return isOldLeader_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @Override
     public final boolean isInitialized() {
@@ -427,6 +959,39 @@ public final class MsgPOJO {
       }
       if (isLeader_ != false) {
         output.writeBool(7, isLeader_);
+      }
+      if (electionId_ != 0) {
+        output.writeInt32(8, electionId_);
+      }
+      if (voteResult_ != 0) {
+        output.writeInt32(9, voteResult_);
+      }
+      if (!indexMapLog_.isEmpty()) {
+        output.writeBytes(10, indexMapLog_);
+      }
+      if (!msgMapLog_.isEmpty()) {
+        output.writeBytes(11, msgMapLog_);
+      }
+      com.google.protobuf.GeneratedMessageV3
+        .serializeStringMapTo(
+          output,
+          internalGetMsgMap(),
+          MsgMapDefaultEntryHolder.defaultEntry,
+          12);
+      com.google.protobuf.GeneratedMessageV3
+        .serializeStringMapTo(
+          output,
+          internalGetLogCopyIndexMap(),
+          LogCopyIndexMapDefaultEntryHolder.defaultEntry,
+          13);
+      if (!logCopyBytes_.isEmpty()) {
+        output.writeBytes(14, logCopyBytes_);
+      }
+      if (term_ != 0) {
+        output.writeInt32(15, term_);
+      }
+      if (isOldLeader_ != false) {
+        output.writeBool(16, isOldLeader_);
       }
       unknownFields.writeTo(output);
     }
@@ -463,6 +1028,54 @@ public final class MsgPOJO {
         size += com.google.protobuf.CodedOutputStream
           .computeBoolSize(7, isLeader_);
       }
+      if (electionId_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(8, electionId_);
+      }
+      if (voteResult_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(9, voteResult_);
+      }
+      if (!indexMapLog_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(10, indexMapLog_);
+      }
+      if (!msgMapLog_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(11, msgMapLog_);
+      }
+      for (java.util.Map.Entry<String, Integer> entry
+           : internalGetMsgMap().getMap().entrySet()) {
+        com.google.protobuf.MapEntry<String, Integer>
+        msgMap__ = MsgMapDefaultEntryHolder.defaultEntry.newBuilderForType()
+            .setKey(entry.getKey())
+            .setValue(entry.getValue())
+            .build();
+        size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(12, msgMap__);
+      }
+      for (java.util.Map.Entry<String, Integer> entry
+           : internalGetLogCopyIndexMap().getMap().entrySet()) {
+        com.google.protobuf.MapEntry<String, Integer>
+        logCopyIndexMap__ = LogCopyIndexMapDefaultEntryHolder.defaultEntry.newBuilderForType()
+            .setKey(entry.getKey())
+            .setValue(entry.getValue())
+            .build();
+        size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(13, logCopyIndexMap__);
+      }
+      if (!logCopyBytes_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(14, logCopyBytes_);
+      }
+      if (term_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(15, term_);
+      }
+      if (isOldLeader_ != false) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(16, isOldLeader_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -492,6 +1105,24 @@ public final class MsgPOJO {
           != other.getPort()) return false;
       if (getIsLeader()
           != other.getIsLeader()) return false;
+      if (getElectionId()
+          != other.getElectionId()) return false;
+      if (getVoteResult()
+          != other.getVoteResult()) return false;
+      if (!getIndexMapLog()
+          .equals(other.getIndexMapLog())) return false;
+      if (!getMsgMapLog()
+          .equals(other.getMsgMapLog())) return false;
+      if (!internalGetMsgMap().equals(
+          other.internalGetMsgMap())) return false;
+      if (!internalGetLogCopyIndexMap().equals(
+          other.internalGetLogCopyIndexMap())) return false;
+      if (!getLogCopyBytes()
+          .equals(other.getLogCopyBytes())) return false;
+      if (getTerm()
+          != other.getTerm()) return false;
+      if (getIsOldLeader()
+          != other.getIsOldLeader()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -519,6 +1150,29 @@ public final class MsgPOJO {
       hash = (37 * hash) + ISLEADER_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
           getIsLeader());
+      hash = (37 * hash) + ELECTIONID_FIELD_NUMBER;
+      hash = (53 * hash) + getElectionId();
+      hash = (37 * hash) + VOTERESULT_FIELD_NUMBER;
+      hash = (53 * hash) + getVoteResult();
+      hash = (37 * hash) + INDEXMAPLOG_FIELD_NUMBER;
+      hash = (53 * hash) + getIndexMapLog().hashCode();
+      hash = (37 * hash) + MSGMAPLOG_FIELD_NUMBER;
+      hash = (53 * hash) + getMsgMapLog().hashCode();
+      if (!internalGetMsgMap().getMap().isEmpty()) {
+        hash = (37 * hash) + MSGMAP_FIELD_NUMBER;
+        hash = (53 * hash) + internalGetMsgMap().hashCode();
+      }
+      if (!internalGetLogCopyIndexMap().getMap().isEmpty()) {
+        hash = (37 * hash) + LOGCOPYINDEXMAP_FIELD_NUMBER;
+        hash = (53 * hash) + internalGetLogCopyIndexMap().hashCode();
+      }
+      hash = (37 * hash) + LOGCOPYBYTES_FIELD_NUMBER;
+      hash = (53 * hash) + getLogCopyBytes().hashCode();
+      hash = (37 * hash) + TERM_FIELD_NUMBER;
+      hash = (53 * hash) + getTerm();
+      hash = (37 * hash) + ISOLDLEADER_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+          getIsOldLeader());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -630,6 +1284,32 @@ public final class MsgPOJO {
         return MsgPOJO.internal_static_Msg_descriptor;
       }
 
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapField internalGetMapField(
+          int number) {
+        switch (number) {
+          case 12:
+            return internalGetMsgMap();
+          case 13:
+            return internalGetLogCopyIndexMap();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
+        }
+      }
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapField internalGetMutableMapField(
+          int number) {
+        switch (number) {
+          case 12:
+            return internalGetMutableMsgMap();
+          case 13:
+            return internalGetMutableLogCopyIndexMap();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
+        }
+      }
       @Override
       protected FieldAccessorTable
           internalGetFieldAccessorTable() {
@@ -670,6 +1350,22 @@ public final class MsgPOJO {
 
         isLeader_ = false;
 
+        electionId_ = 0;
+
+        voteResult_ = 0;
+
+        indexMapLog_ = com.google.protobuf.ByteString.EMPTY;
+
+        msgMapLog_ = com.google.protobuf.ByteString.EMPTY;
+
+        internalGetMutableMsgMap().clear();
+        internalGetMutableLogCopyIndexMap().clear();
+        logCopyBytes_ = com.google.protobuf.ByteString.EMPTY;
+
+        term_ = 0;
+
+        isOldLeader_ = false;
+
         return this;
       }
 
@@ -696,6 +1392,7 @@ public final class MsgPOJO {
       @Override
       public Msg buildPartial() {
         Msg result = new Msg(this);
+        int from_bitField0_ = bitField0_;
         result.msgId_ = msgId_;
         result.type_ = type_;
         result.index_ = index_;
@@ -703,6 +1400,17 @@ public final class MsgPOJO {
         result.content_ = content_;
         result.port_ = port_;
         result.isLeader_ = isLeader_;
+        result.electionId_ = electionId_;
+        result.voteResult_ = voteResult_;
+        result.indexMapLog_ = indexMapLog_;
+        result.msgMapLog_ = msgMapLog_;
+        result.msgMap_ = internalGetMsgMap();
+        result.msgMap_.makeImmutable();
+        result.logCopyIndexMap_ = internalGetLogCopyIndexMap();
+        result.logCopyIndexMap_.makeImmutable();
+        result.logCopyBytes_ = logCopyBytes_;
+        result.term_ = term_;
+        result.isOldLeader_ = isOldLeader_;
         onBuilt();
         return result;
       }
@@ -774,6 +1482,31 @@ public final class MsgPOJO {
         if (other.getIsLeader() != false) {
           setIsLeader(other.getIsLeader());
         }
+        if (other.getElectionId() != 0) {
+          setElectionId(other.getElectionId());
+        }
+        if (other.getVoteResult() != 0) {
+          setVoteResult(other.getVoteResult());
+        }
+        if (other.getIndexMapLog() != com.google.protobuf.ByteString.EMPTY) {
+          setIndexMapLog(other.getIndexMapLog());
+        }
+        if (other.getMsgMapLog() != com.google.protobuf.ByteString.EMPTY) {
+          setMsgMapLog(other.getMsgMapLog());
+        }
+        internalGetMutableMsgMap().mergeFrom(
+            other.internalGetMsgMap());
+        internalGetMutableLogCopyIndexMap().mergeFrom(
+            other.internalGetLogCopyIndexMap());
+        if (other.getLogCopyBytes() != com.google.protobuf.ByteString.EMPTY) {
+          setLogCopyBytes(other.getLogCopyBytes());
+        }
+        if (other.getTerm() != 0) {
+          setTerm(other.getTerm());
+        }
+        if (other.getIsOldLeader() != false) {
+          setIsOldLeader(other.getIsOldLeader());
+        }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
@@ -802,6 +1535,7 @@ public final class MsgPOJO {
         }
         return this;
       }
+      private int bitField0_;
 
       private long msgId_ ;
       /**
@@ -1209,6 +1943,592 @@ public final class MsgPOJO {
         onChanged();
         return this;
       }
+
+      private int electionId_ ;
+      /**
+       * <pre>
+       * 选举的轮次
+       * </pre>
+       *
+       * <code>int32 ElectionId = 8;</code>
+       * @return The electionId.
+       */
+      @Override
+      public int getElectionId() {
+        return electionId_;
+      }
+      /**
+       * <pre>
+       * 选举的轮次
+       * </pre>
+       *
+       * <code>int32 ElectionId = 8;</code>
+       * @param value The electionId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setElectionId(int value) {
+        
+        electionId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 选举的轮次
+       * </pre>
+       *
+       * <code>int32 ElectionId = 8;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearElectionId() {
+        
+        electionId_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int voteResult_ ;
+      /**
+       * <pre>
+       * 投票结果，1：通过，0：不通过
+       * </pre>
+       *
+       * <code>int32 voteResult = 9;</code>
+       * @return The voteResult.
+       */
+      @Override
+      public int getVoteResult() {
+        return voteResult_;
+      }
+      /**
+       * <pre>
+       * 投票结果，1：通过，0：不通过
+       * </pre>
+       *
+       * <code>int32 voteResult = 9;</code>
+       * @param value The voteResult to set.
+       * @return This builder for chaining.
+       */
+      public Builder setVoteResult(int value) {
+        
+        voteResult_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 投票结果，1：通过，0：不通过
+       * </pre>
+       *
+       * <code>int32 voteResult = 9;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearVoteResult() {
+        
+        voteResult_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.ByteString indexMapLog_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <code>bytes indexMapLog = 10;</code>
+       * @return The indexMapLog.
+       */
+      @Override
+      public com.google.protobuf.ByteString getIndexMapLog() {
+        return indexMapLog_;
+      }
+      /**
+       * <code>bytes indexMapLog = 10;</code>
+       * @param value The indexMapLog to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIndexMapLog(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        indexMapLog_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bytes indexMapLog = 10;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearIndexMapLog() {
+        
+        indexMapLog_ = getDefaultInstance().getIndexMapLog();
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.ByteString msgMapLog_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <code>bytes msgMapLog = 11;</code>
+       * @return The msgMapLog.
+       */
+      @Override
+      public com.google.protobuf.ByteString getMsgMapLog() {
+        return msgMapLog_;
+      }
+      /**
+       * <code>bytes msgMapLog = 11;</code>
+       * @param value The msgMapLog to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMsgMapLog(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        msgMapLog_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bytes msgMapLog = 11;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearMsgMapLog() {
+        
+        msgMapLog_ = getDefaultInstance().getMsgMapLog();
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.MapField<
+          String, Integer> msgMap_;
+      private com.google.protobuf.MapField<String, Integer>
+      internalGetMsgMap() {
+        if (msgMap_ == null) {
+          return com.google.protobuf.MapField.emptyMapField(
+              MsgMapDefaultEntryHolder.defaultEntry);
+        }
+        return msgMap_;
+      }
+      private com.google.protobuf.MapField<String, Integer>
+      internalGetMutableMsgMap() {
+        onChanged();;
+        if (msgMap_ == null) {
+          msgMap_ = com.google.protobuf.MapField.newMapField(
+              MsgMapDefaultEntryHolder.defaultEntry);
+        }
+        if (!msgMap_.isMutable()) {
+          msgMap_ = msgMap_.copy();
+        }
+        return msgMap_;
+      }
+
+      public int getMsgMapCount() {
+        return internalGetMsgMap().getMap().size();
+      }
+      /**
+       * <pre>
+       * 同步日志用，key为projectId，value为commitedIndex
+       * </pre>
+       *
+       * <code>map&lt;string, int32&gt; msgMap = 12;</code>
+       */
+
+      @Override
+      public boolean containsMsgMap(
+          String key) {
+        if (key == null) { throw new NullPointerException(); }
+        return internalGetMsgMap().getMap().containsKey(key);
+      }
+      /**
+       * Use {@link #getMsgMapMap()} instead.
+       */
+      @Override
+      @Deprecated
+      public java.util.Map<String, Integer> getMsgMap() {
+        return getMsgMapMap();
+      }
+      /**
+       * <pre>
+       * 同步日志用，key为projectId，value为commitedIndex
+       * </pre>
+       *
+       * <code>map&lt;string, int32&gt; msgMap = 12;</code>
+       */
+      @Override
+
+      public java.util.Map<String, Integer> getMsgMapMap() {
+        return internalGetMsgMap().getMap();
+      }
+      /**
+       * <pre>
+       * 同步日志用，key为projectId，value为commitedIndex
+       * </pre>
+       *
+       * <code>map&lt;string, int32&gt; msgMap = 12;</code>
+       */
+      @Override
+
+      public int getMsgMapOrDefault(
+          String key,
+          int defaultValue) {
+        if (key == null) { throw new NullPointerException(); }
+        java.util.Map<String, Integer> map =
+            internalGetMsgMap().getMap();
+        return map.containsKey(key) ? map.get(key) : defaultValue;
+      }
+      /**
+       * <pre>
+       * 同步日志用，key为projectId，value为commitedIndex
+       * </pre>
+       *
+       * <code>map&lt;string, int32&gt; msgMap = 12;</code>
+       */
+      @Override
+
+      public int getMsgMapOrThrow(
+          String key) {
+        if (key == null) { throw new NullPointerException(); }
+        java.util.Map<String, Integer> map =
+            internalGetMsgMap().getMap();
+        if (!map.containsKey(key)) {
+          throw new IllegalArgumentException();
+        }
+        return map.get(key);
+      }
+
+      public Builder clearMsgMap() {
+        internalGetMutableMsgMap().getMutableMap()
+            .clear();
+        return this;
+      }
+      /**
+       * <pre>
+       * 同步日志用，key为projectId，value为commitedIndex
+       * </pre>
+       *
+       * <code>map&lt;string, int32&gt; msgMap = 12;</code>
+       */
+
+      public Builder removeMsgMap(
+          String key) {
+        if (key == null) { throw new NullPointerException(); }
+        internalGetMutableMsgMap().getMutableMap()
+            .remove(key);
+        return this;
+      }
+      /**
+       * Use alternate mutation accessors instead.
+       */
+      @Deprecated
+      public java.util.Map<String, Integer>
+      getMutableMsgMap() {
+        return internalGetMutableMsgMap().getMutableMap();
+      }
+      /**
+       * <pre>
+       * 同步日志用，key为projectId，value为commitedIndex
+       * </pre>
+       *
+       * <code>map&lt;string, int32&gt; msgMap = 12;</code>
+       */
+      public Builder putMsgMap(
+          String key,
+          int value) {
+        if (key == null) { throw new NullPointerException(); }
+        
+        internalGetMutableMsgMap().getMutableMap()
+            .put(key, value);
+        return this;
+      }
+      /**
+       * <pre>
+       * 同步日志用，key为projectId，value为commitedIndex
+       * </pre>
+       *
+       * <code>map&lt;string, int32&gt; msgMap = 12;</code>
+       */
+
+      public Builder putAllMsgMap(
+          java.util.Map<String, Integer> values) {
+        internalGetMutableMsgMap().getMutableMap()
+            .putAll(values);
+        return this;
+      }
+
+      private com.google.protobuf.MapField<
+          String, Integer> logCopyIndexMap_;
+      private com.google.protobuf.MapField<String, Integer>
+      internalGetLogCopyIndexMap() {
+        if (logCopyIndexMap_ == null) {
+          return com.google.protobuf.MapField.emptyMapField(
+              LogCopyIndexMapDefaultEntryHolder.defaultEntry);
+        }
+        return logCopyIndexMap_;
+      }
+      private com.google.protobuf.MapField<String, Integer>
+      internalGetMutableLogCopyIndexMap() {
+        onChanged();;
+        if (logCopyIndexMap_ == null) {
+          logCopyIndexMap_ = com.google.protobuf.MapField.newMapField(
+              LogCopyIndexMapDefaultEntryHolder.defaultEntry);
+        }
+        if (!logCopyIndexMap_.isMutable()) {
+          logCopyIndexMap_ = logCopyIndexMap_.copy();
+        }
+        return logCopyIndexMap_;
+      }
+
+      public int getLogCopyIndexMapCount() {
+        return internalGetLogCopyIndexMap().getMap().size();
+      }
+      /**
+       * <pre>
+       * key为projectId，value为各projectId日志中需要传输的增量的字节数
+       * </pre>
+       *
+       * <code>map&lt;string, int32&gt; logCopyIndexMap = 13;</code>
+       */
+
+      @Override
+      public boolean containsLogCopyIndexMap(
+          String key) {
+        if (key == null) { throw new NullPointerException(); }
+        return internalGetLogCopyIndexMap().getMap().containsKey(key);
+      }
+      /**
+       * Use {@link #getLogCopyIndexMapMap()} instead.
+       */
+      @Override
+      @Deprecated
+      public java.util.Map<String, Integer> getLogCopyIndexMap() {
+        return getLogCopyIndexMapMap();
+      }
+      /**
+       * <pre>
+       * key为projectId，value为各projectId日志中需要传输的增量的字节数
+       * </pre>
+       *
+       * <code>map&lt;string, int32&gt; logCopyIndexMap = 13;</code>
+       */
+      @Override
+
+      public java.util.Map<String, Integer> getLogCopyIndexMapMap() {
+        return internalGetLogCopyIndexMap().getMap();
+      }
+      /**
+       * <pre>
+       * key为projectId，value为各projectId日志中需要传输的增量的字节数
+       * </pre>
+       *
+       * <code>map&lt;string, int32&gt; logCopyIndexMap = 13;</code>
+       */
+      @Override
+
+      public int getLogCopyIndexMapOrDefault(
+          String key,
+          int defaultValue) {
+        if (key == null) { throw new NullPointerException(); }
+        java.util.Map<String, Integer> map =
+            internalGetLogCopyIndexMap().getMap();
+        return map.containsKey(key) ? map.get(key) : defaultValue;
+      }
+      /**
+       * <pre>
+       * key为projectId，value为各projectId日志中需要传输的增量的字节数
+       * </pre>
+       *
+       * <code>map&lt;string, int32&gt; logCopyIndexMap = 13;</code>
+       */
+      @Override
+
+      public int getLogCopyIndexMapOrThrow(
+          String key) {
+        if (key == null) { throw new NullPointerException(); }
+        java.util.Map<String, Integer> map =
+            internalGetLogCopyIndexMap().getMap();
+        if (!map.containsKey(key)) {
+          throw new IllegalArgumentException();
+        }
+        return map.get(key);
+      }
+
+      public Builder clearLogCopyIndexMap() {
+        internalGetMutableLogCopyIndexMap().getMutableMap()
+            .clear();
+        return this;
+      }
+      /**
+       * <pre>
+       * key为projectId，value为各projectId日志中需要传输的增量的字节数
+       * </pre>
+       *
+       * <code>map&lt;string, int32&gt; logCopyIndexMap = 13;</code>
+       */
+
+      public Builder removeLogCopyIndexMap(
+          String key) {
+        if (key == null) { throw new NullPointerException(); }
+        internalGetMutableLogCopyIndexMap().getMutableMap()
+            .remove(key);
+        return this;
+      }
+      /**
+       * Use alternate mutation accessors instead.
+       */
+      @Deprecated
+      public java.util.Map<String, Integer>
+      getMutableLogCopyIndexMap() {
+        return internalGetMutableLogCopyIndexMap().getMutableMap();
+      }
+      /**
+       * <pre>
+       * key为projectId，value为各projectId日志中需要传输的增量的字节数
+       * </pre>
+       *
+       * <code>map&lt;string, int32&gt; logCopyIndexMap = 13;</code>
+       */
+      public Builder putLogCopyIndexMap(
+          String key,
+          int value) {
+        if (key == null) { throw new NullPointerException(); }
+        
+        internalGetMutableLogCopyIndexMap().getMutableMap()
+            .put(key, value);
+        return this;
+      }
+      /**
+       * <pre>
+       * key为projectId，value为各projectId日志中需要传输的增量的字节数
+       * </pre>
+       *
+       * <code>map&lt;string, int32&gt; logCopyIndexMap = 13;</code>
+       */
+
+      public Builder putAllLogCopyIndexMap(
+          java.util.Map<String, Integer> values) {
+        internalGetMutableLogCopyIndexMap().getMutableMap()
+            .putAll(values);
+        return this;
+      }
+
+      private com.google.protobuf.ByteString logCopyBytes_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <pre>
+       * 所有projectId需要传输的增加的字节数组
+       * </pre>
+       *
+       * <code>bytes logCopyBytes = 14;</code>
+       * @return The logCopyBytes.
+       */
+      @Override
+      public com.google.protobuf.ByteString getLogCopyBytes() {
+        return logCopyBytes_;
+      }
+      /**
+       * <pre>
+       * 所有projectId需要传输的增加的字节数组
+       * </pre>
+       *
+       * <code>bytes logCopyBytes = 14;</code>
+       * @param value The logCopyBytes to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLogCopyBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        logCopyBytes_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 所有projectId需要传输的增加的字节数组
+       * </pre>
+       *
+       * <code>bytes logCopyBytes = 14;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearLogCopyBytes() {
+        
+        logCopyBytes_ = getDefaultInstance().getLogCopyBytes();
+        onChanged();
+        return this;
+      }
+
+      private int term_ ;
+      /**
+       * <code>int32 term = 15;</code>
+       * @return The term.
+       */
+      @Override
+      public int getTerm() {
+        return term_;
+      }
+      /**
+       * <code>int32 term = 15;</code>
+       * @param value The term to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTerm(int value) {
+        
+        term_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 term = 15;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTerm() {
+        
+        term_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private boolean isOldLeader_ ;
+      /**
+       * <pre>
+       * 对方是否是老leader
+       * </pre>
+       *
+       * <code>bool isOldLeader = 16;</code>
+       * @return The isOldLeader.
+       */
+      @Override
+      public boolean getIsOldLeader() {
+        return isOldLeader_;
+      }
+      /**
+       * <pre>
+       * 对方是否是老leader
+       * </pre>
+       *
+       * <code>bool isOldLeader = 16;</code>
+       * @param value The isOldLeader to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsOldLeader(boolean value) {
+        
+        isOldLeader_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 对方是否是老leader
+       * </pre>
+       *
+       * <code>bool isOldLeader = 16;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearIsOldLeader() {
+        
+        isOldLeader_ = false;
+        onChanged();
+        return this;
+      }
       @Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -1267,6 +2587,16 @@ public final class MsgPOJO {
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_Msg_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_Msg_MsgMapEntry_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_Msg_MsgMapEntry_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_Msg_LogCopyIndexMapEntry_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_Msg_LogCopyIndexMapEntry_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -1276,10 +2606,18 @@ public final class MsgPOJO {
       descriptor;
   static {
     String[] descriptorData = {
-      "\n\tMsg.proto\"u\n\003Msg\022\r\n\005msgId\030\001 \001(\003\022\014\n\004typ" +
-      "e\030\002 \001(\005\022\r\n\005index\030\003 \001(\005\022\021\n\tprojectId\030\004 \001(" +
-      "\t\022\017\n\007content\030\005 \001(\t\022\014\n\004port\030\006 \001(\005\022\020\n\010isLe" +
-      "ader\030\007 \001(\010B\tB\007MsgPOJOb\006proto3"
+      "\n\tMsg.proto\"\273\003\n\003Msg\022\r\n\005msgId\030\001 \001(\003\022\014\n\004ty" +
+      "pe\030\002 \001(\005\022\r\n\005index\030\003 \001(\005\022\021\n\tprojectId\030\004 \001" +
+      "(\t\022\017\n\007content\030\005 \001(\t\022\014\n\004port\030\006 \001(\005\022\020\n\010isL" +
+      "eader\030\007 \001(\010\022\022\n\nElectionId\030\010 \001(\005\022\022\n\nvoteR" +
+      "esult\030\t \001(\005\022\023\n\013indexMapLog\030\n \001(\014\022\021\n\tmsgM" +
+      "apLog\030\013 \001(\014\022 \n\006msgMap\030\014 \003(\0132\020.Msg.MsgMap" +
+      "Entry\0222\n\017logCopyIndexMap\030\r \003(\0132\031.Msg.Log" +
+      "CopyIndexMapEntry\022\024\n\014logCopyBytes\030\016 \001(\014\022" +
+      "\014\n\004term\030\017 \001(\005\022\023\n\013isOldLeader\030\020 \001(\010\032-\n\013Ms" +
+      "gMapEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\005:\0028" +
+      "\001\0326\n\024LogCopyIndexMapEntry\022\013\n\003key\030\001 \001(\t\022\r" +
+      "\n\005value\030\002 \001(\005:\0028\001B\tB\007MsgPOJOb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -1290,7 +2628,19 @@ public final class MsgPOJO {
     internal_static_Msg_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_Msg_descriptor,
-        new String[] { "MsgId", "Type", "Index", "ProjectId", "Content", "Port", "IsLeader", });
+        new String[] { "MsgId", "Type", "Index", "ProjectId", "Content", "Port", "IsLeader", "ElectionId", "VoteResult", "IndexMapLog", "MsgMapLog", "MsgMap", "LogCopyIndexMap", "LogCopyBytes", "Term", "IsOldLeader", });
+    internal_static_Msg_MsgMapEntry_descriptor =
+      internal_static_Msg_descriptor.getNestedTypes().get(0);
+    internal_static_Msg_MsgMapEntry_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_Msg_MsgMapEntry_descriptor,
+        new String[] { "Key", "Value", });
+    internal_static_Msg_LogCopyIndexMapEntry_descriptor =
+      internal_static_Msg_descriptor.getNestedTypes().get(1);
+    internal_static_Msg_LogCopyIndexMapEntry_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_Msg_LogCopyIndexMapEntry_descriptor,
+        new String[] { "Key", "Value", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

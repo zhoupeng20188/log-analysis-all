@@ -26,6 +26,10 @@ public class Election {
      */
     public static volatile boolean isLeader;
     /**
+     * 是否为老leader
+     */
+    public static volatile boolean isOldLeader;
+    /**
      * 当前slave port
      */
     public static int port;

@@ -94,7 +94,8 @@ public class SlaveNodeServer {
                             socketChannel.pipeline().addLast(new ProtobufEncoder());
                             //配置Protobuf解码工具ProtobufVarint32FrameDecoder与ProtobufDecoder
                             socketChannel.pipeline().addLast(new ProtobufVarint32FrameDecoder());
-                            socketChannel.pipeline().addLast(new ProtobufDecoder(ElectionPOJO.Election.getDefaultInstance()));
+//                            socketChannel.pipeline().addLast(new ProtobufDecoder(ElectionPOJO.Election.getDefaultInstance()));
+                            socketChannel.pipeline().addLast(new ProtobufDecoder(MsgPOJO.Msg.getDefaultInstance()));
                             socketChannel.pipeline().addLast(new ElectionNettyServerHandler());
                         }
                     });

@@ -25,27 +25,27 @@ public class ThreadUtil {
                 .scheduleAtFixedRate(new Runnable() {
                     @Override
                     public void run() {
-                        if (Server.masterChannel.isOpen()) {
+                        if (!Election.stopHeartbeat) {
+                            if (Server.masterChannel.isOpen()) {
 
-                            MsgPOJO.Msg.Builder msgSend = MsgPOJO.Msg.newBuilder()
-                                    .setType(Consts.MSG_TYPE_HEARTBEAT)
-                                    .setPort(Server.port)
-                                    .setIsLeader(Election.isLeader);
-                            Server.masterChannel.writeAndFlush(msgSend);
-                            log.info("send heartbeat to master node：" + Server.masterChannel.remoteAddress());
-                        } else {
-                            // 重连老master
-                            final EventLoop eventLoop = Server.masterChannel.eventLoop();
-                            eventLoop.schedule(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (!Election.stopHeartbeat) {
-                                        NettyUtil.startNettyClient(new NettyClientHandler(Server.port), serverAddr, serverPort);
-                                    }
-                                }
-                            }, 10, TimeUnit.SECONDS);
+                                MsgPOJO.Msg.Builder msgSend = MsgPOJO.Msg.newBuilder()
+                                        .setType(Consts.MSG_TYPE_HEARTBEAT)
+                                        .setPort(Server.port)
+                                        .setIsLeader(Election.isLeader);
+                                Server.masterChannel.writeAndFlush(msgSend);
+                                log.info("send heartbeat to master node：" + Server.masterChannel.remoteAddress());
+                            } else {
+                                // 重连老master
+//                            final EventLoop eventLoop = Server.masterChannel.eventLoop();
+//                            eventLoop.schedule(new Runnable() {
+//                                @Override
+//                                public void run() {
+                                NettyUtil.startNettyClient(new NettyClientHandler(Server.port), serverAddr, serverPort);
+//                                }
+//                            }, 10, TimeUnit.SECONDS);
+                            }
                         }
                     }
-                }, 10, 10, TimeUnit.SECONDS);
+                }, 0, 10, TimeUnit.SECONDS);
     }
 }

@@ -15,4 +15,6 @@ message Election { // 会在ElectionPOJO外部类中生成一个Election内部�
     map<string, int32> msgMap = 11; // 同步日志用，key为projectId，value为commitedIndex
     map<string, int32> logCopyIndexMap = 12; // key为projectId，value为各projectId日志中需要传输的增量的字节数
     bytes logCopyBytes = 13; // 所有projectId需要传输的增加的字节数组
+    bool isLeader = 14; // 对方是否是leader
+    int64 msgId =15;
 }

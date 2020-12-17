@@ -121,10 +121,18 @@ public final class ElectionPOJO {
     com.google.protobuf.ByteString getMsgMapLog();
 
     /**
+     * <pre>
+     * 同步日志用，key为projectId，value为commitedIndex
+     * </pre>
+     *
      * <code>map&lt;string, int32&gt; msgMap = 11;</code>
      */
     int getMsgMapCount();
     /**
+     * <pre>
+     * 同步日志用，key为projectId，value为commitedIndex
+     * </pre>
+     *
      * <code>map&lt;string, int32&gt; msgMap = 11;</code>
      */
     boolean containsMsgMap(
@@ -136,11 +144,19 @@ public final class ElectionPOJO {
     java.util.Map<String, Integer>
     getMsgMap();
     /**
+     * <pre>
+     * 同步日志用，key为projectId，value为commitedIndex
+     * </pre>
+     *
      * <code>map&lt;string, int32&gt; msgMap = 11;</code>
      */
     java.util.Map<String, Integer>
     getMsgMapMap();
     /**
+     * <pre>
+     * 同步日志用，key为projectId，value为commitedIndex
+     * </pre>
+     *
      * <code>map&lt;string, int32&gt; msgMap = 11;</code>
      */
 
@@ -148,6 +164,10 @@ public final class ElectionPOJO {
             String key,
             int defaultValue);
     /**
+     * <pre>
+     * 同步日志用，key为projectId，value为commitedIndex
+     * </pre>
+     *
      * <code>map&lt;string, int32&gt; msgMap = 11;</code>
      */
 
@@ -217,6 +237,16 @@ public final class ElectionPOJO {
      * @return The logCopyBytes.
      */
     com.google.protobuf.ByteString getLogCopyBytes();
+
+    /**
+     * <pre>
+     * 对方是否是leader
+     * </pre>
+     *
+     * <code>bool isLeader = 14;</code>
+     * @return The isLeader.
+     */
+    boolean getIsLeader();
   }
   /**
    * <pre>
@@ -354,6 +384,11 @@ public final class ElectionPOJO {
             case 106: {
 
               logCopyBytes_ = input.readBytes();
+              break;
+            }
+            case 112: {
+
+              isLeader_ = input.readBool();
               break;
             }
             default: {
@@ -625,6 +660,10 @@ public final class ElectionPOJO {
       return internalGetMsgMap().getMap().size();
     }
     /**
+     * <pre>
+     * 同步日志用，key为projectId，value为commitedIndex
+     * </pre>
+     *
      * <code>map&lt;string, int32&gt; msgMap = 11;</code>
      */
 
@@ -643,6 +682,10 @@ public final class ElectionPOJO {
       return getMsgMapMap();
     }
     /**
+     * <pre>
+     * 同步日志用，key为projectId，value为commitedIndex
+     * </pre>
+     *
      * <code>map&lt;string, int32&gt; msgMap = 11;</code>
      */
     @Override
@@ -651,6 +694,10 @@ public final class ElectionPOJO {
       return internalGetMsgMap().getMap();
     }
     /**
+     * <pre>
+     * 同步日志用，key为projectId，value为commitedIndex
+     * </pre>
+     *
      * <code>map&lt;string, int32&gt; msgMap = 11;</code>
      */
     @Override
@@ -664,6 +711,10 @@ public final class ElectionPOJO {
       return map.containsKey(key) ? map.get(key) : defaultValue;
     }
     /**
+     * <pre>
+     * 同步日志用，key为projectId，value为commitedIndex
+     * </pre>
+     *
      * <code>map&lt;string, int32&gt; msgMap = 11;</code>
      */
     @Override
@@ -791,6 +842,21 @@ public final class ElectionPOJO {
       return logCopyBytes_;
     }
 
+    public static final int ISLEADER_FIELD_NUMBER = 14;
+    private boolean isLeader_;
+    /**
+     * <pre>
+     * 对方是否是leader
+     * </pre>
+     *
+     * <code>bool isLeader = 14;</code>
+     * @return The isLeader.
+     */
+    @Override
+    public boolean getIsLeader() {
+      return isLeader_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @Override
     public final boolean isInitialized() {
@@ -849,6 +915,9 @@ public final class ElectionPOJO {
           12);
       if (!logCopyBytes_.isEmpty()) {
         output.writeBytes(13, logCopyBytes_);
+      }
+      if (isLeader_ != false) {
+        output.writeBool(14, isLeader_);
       }
       unknownFields.writeTo(output);
     }
@@ -921,6 +990,10 @@ public final class ElectionPOJO {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(13, logCopyBytes_);
       }
+      if (isLeader_ != false) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(14, isLeader_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -962,6 +1035,8 @@ public final class ElectionPOJO {
           other.internalGetLogCopyIndexMap())) return false;
       if (!getLogCopyBytes()
           .equals(other.getLogCopyBytes())) return false;
+      if (getIsLeader()
+          != other.getIsLeader()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -1003,6 +1078,9 @@ public final class ElectionPOJO {
       }
       hash = (37 * hash) + LOGCOPYBYTES_FIELD_NUMBER;
       hash = (53 * hash) + getLogCopyBytes().hashCode();
+      hash = (37 * hash) + ISLEADER_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+          getIsLeader());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -1190,6 +1268,8 @@ public final class ElectionPOJO {
         internalGetMutableLogCopyIndexMap().clear();
         logCopyBytes_ = com.google.protobuf.ByteString.EMPTY;
 
+        isLeader_ = false;
+
         return this;
       }
 
@@ -1232,6 +1312,7 @@ public final class ElectionPOJO {
         result.logCopyIndexMap_ = internalGetLogCopyIndexMap();
         result.logCopyIndexMap_.makeImmutable();
         result.logCopyBytes_ = logCopyBytes_;
+        result.isLeader_ = isLeader_;
         onBuilt();
         return result;
       }
@@ -1318,6 +1399,9 @@ public final class ElectionPOJO {
             other.internalGetLogCopyIndexMap());
         if (other.getLogCopyBytes() != com.google.protobuf.ByteString.EMPTY) {
           setLogCopyBytes(other.getLogCopyBytes());
+        }
+        if (other.getIsLeader() != false) {
+          setIsLeader(other.getIsLeader());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -1874,6 +1958,10 @@ public final class ElectionPOJO {
         return internalGetMsgMap().getMap().size();
       }
       /**
+       * <pre>
+       * 同步日志用，key为projectId，value为commitedIndex
+       * </pre>
+       *
        * <code>map&lt;string, int32&gt; msgMap = 11;</code>
        */
 
@@ -1892,6 +1980,10 @@ public final class ElectionPOJO {
         return getMsgMapMap();
       }
       /**
+       * <pre>
+       * 同步日志用，key为projectId，value为commitedIndex
+       * </pre>
+       *
        * <code>map&lt;string, int32&gt; msgMap = 11;</code>
        */
       @Override
@@ -1900,6 +1992,10 @@ public final class ElectionPOJO {
         return internalGetMsgMap().getMap();
       }
       /**
+       * <pre>
+       * 同步日志用，key为projectId，value为commitedIndex
+       * </pre>
+       *
        * <code>map&lt;string, int32&gt; msgMap = 11;</code>
        */
       @Override
@@ -1913,6 +2009,10 @@ public final class ElectionPOJO {
         return map.containsKey(key) ? map.get(key) : defaultValue;
       }
       /**
+       * <pre>
+       * 同步日志用，key为projectId，value为commitedIndex
+       * </pre>
+       *
        * <code>map&lt;string, int32&gt; msgMap = 11;</code>
        */
       @Override
@@ -1934,6 +2034,10 @@ public final class ElectionPOJO {
         return this;
       }
       /**
+       * <pre>
+       * 同步日志用，key为projectId，value为commitedIndex
+       * </pre>
+       *
        * <code>map&lt;string, int32&gt; msgMap = 11;</code>
        */
 
@@ -1953,6 +2057,10 @@ public final class ElectionPOJO {
         return internalGetMutableMsgMap().getMutableMap();
       }
       /**
+       * <pre>
+       * 同步日志用，key为projectId，value为commitedIndex
+       * </pre>
+       *
        * <code>map&lt;string, int32&gt; msgMap = 11;</code>
        */
       public Builder putMsgMap(
@@ -1965,6 +2073,10 @@ public final class ElectionPOJO {
         return this;
       }
       /**
+       * <pre>
+       * 同步日志用，key为projectId，value为commitedIndex
+       * </pre>
+       *
        * <code>map&lt;string, int32&gt; msgMap = 11;</code>
        */
 
@@ -2176,6 +2288,49 @@ public final class ElectionPOJO {
         onChanged();
         return this;
       }
+
+      private boolean isLeader_ ;
+      /**
+       * <pre>
+       * 对方是否是leader
+       * </pre>
+       *
+       * <code>bool isLeader = 14;</code>
+       * @return The isLeader.
+       */
+      @Override
+      public boolean getIsLeader() {
+        return isLeader_;
+      }
+      /**
+       * <pre>
+       * 对方是否是leader
+       * </pre>
+       *
+       * <code>bool isLeader = 14;</code>
+       * @param value The isLeader to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsLeader(boolean value) {
+        
+        isLeader_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 对方是否是leader
+       * </pre>
+       *
+       * <code>bool isLeader = 14;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearIsLeader() {
+        
+        isLeader_ = false;
+        onChanged();
+        return this;
+      }
       @Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -2253,7 +2408,7 @@ public final class ElectionPOJO {
       descriptor;
   static {
     String[] descriptorData = {
-      "\n\016Election.proto\"\224\003\n\010Election\022\014\n\004term\030\001 " +
+      "\n\016Election.proto\"\246\003\n\010Election\022\014\n\004term\030\001 " +
       "\001(\005\022\014\n\004type\030\002 \001(\005\022\r\n\005index\030\003 \001(\005\022\022\n\nElec" +
       "tionId\030\004 \001(\005\022\022\n\nvoteResult\030\005 \001(\005\022\014\n\004port" +
       "\030\006 \001(\005\022\017\n\007content\030\007 \001(\t\022\021\n\tprojectId\030\010 \001" +
@@ -2261,10 +2416,10 @@ public final class ElectionPOJO {
       "(\014\022%\n\006msgMap\030\013 \003(\0132\025.Election.MsgMapEntr" +
       "y\0227\n\017logCopyIndexMap\030\014 \003(\0132\036.Election.Lo" +
       "gCopyIndexMapEntry\022\024\n\014logCopyBytes\030\r \001(\014" +
-      "\032-\n\013MsgMapEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 " +
-      "\001(\005:\0028\001\0326\n\024LogCopyIndexMapEntry\022\013\n\003key\030\001" +
-      " \001(\t\022\r\n\005value\030\002 \001(\005:\0028\001B\016B\014ElectionPOJOb" +
-      "\006proto3"
+      "\022\020\n\010isLeader\030\016 \001(\010\032-\n\013MsgMapEntry\022\013\n\003key" +
+      "\030\001 \001(\t\022\r\n\005value\030\002 \001(\005:\0028\001\0326\n\024LogCopyInde" +
+      "xMapEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\005:\0028" +
+      "\001B\016B\014ElectionPOJOb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -2275,7 +2430,7 @@ public final class ElectionPOJO {
     internal_static_Election_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_Election_descriptor,
-        new String[] { "Term", "Type", "Index", "ElectionId", "VoteResult", "Port", "Content", "ProjectId", "IndexMapLog", "MsgMapLog", "MsgMap", "LogCopyIndexMap", "LogCopyBytes", });
+        new String[] { "Term", "Type", "Index", "ElectionId", "VoteResult", "Port", "Content", "ProjectId", "IndexMapLog", "MsgMapLog", "MsgMap", "LogCopyIndexMap", "LogCopyBytes", "IsLeader", });
     internal_static_Election_MsgMapEntry_descriptor =
       internal_static_Election_descriptor.getNestedTypes().get(0);
     internal_static_Election_MsgMapEntry_fieldAccessorTable = new

@@ -3,8 +3,6 @@ package com.zp;
 import com.zp.constrants.Consts;
 import com.zp.entity.Election;
 import com.zp.entity.Server;
-import com.zp.handler.ElectionNettyClientHandler;
-import com.zp.handler.NettyClientHandler;
 import com.zp.protobuf.MsgPOJO;
 import com.zp.utils.ChannelUtil;
 import com.zp.utils.ElectionUtil;
@@ -13,15 +11,9 @@ import com.zp.utils.ThreadUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.group.ChannelGroup;
-import io.netty.channel.group.DefaultChannelGroup;
-import io.netty.util.concurrent.GlobalEventExecutor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.SocketAddress;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @Author zp
@@ -34,8 +26,6 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
      * 定义一个channel组，管理所有channel
      */
 //    private static ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
-
-
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         // 开始选举
@@ -55,34 +45,48 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         // projectId
         String projectId = msgRsrv.getProjectId();
         boolean isLeader = msgRsrv.getIsLeader();
+        boolean isOldLeader = msgRsrv.getIsOldLeader();
         log.info("客户端消息：" + msg);
         log.info("客户端地址：" + ctx.channel().remoteAddress());
         MsgPOJO.Msg.Builder builder = MsgPOJO.Msg.newBuilder();
         MsgPOJO.Msg.Builder msgSend = null;
         if (msgType == Consts.MSG_TYPE_HEARTBEAT) {
+            if (isOldLeader) {
+                // 停止向老master发送心跳
+                Election.stopHeartbeat = true;
+            }
             if (isLeader && Election.isLeader) {
                 // 对方是leader时，代表自己是老master重连，给新master发送心跳
-                // 更新master状态
-                Election.isLeader = false;
                 Server.masterChannel = ctx.channel();
                 SocketAddress socketAddress = ctx.channel().remoteAddress();
                 String[] split = String.valueOf(socketAddress).replace("/", "").split(":");
+                log.info("收到新master的连接，准备发送心跳到新master.");
                 ThreadUtil.startHeartbeatThread(split[0], Integer.parseInt(split[1]));
+                // 更新master状态
+                Election.isLeader = false;
             } else {
+                // 保存slave的地址
+                ChannelUtil.storeSlaveAddress(ctx.channel(), msgRsrv.getPort());
                 // 发送heartbeat的ack，包括所有slave server的地址
                 MsgUtil.sendHeartbeatAck(ctx, msgRsrv.getPort());
             }
         } else if (msgType == Consts.MSG_TYPE_HEARTBEAT_ACK) {
-            log.info("接收到最新的slave集群地址：" + msgContent);
-            Server.otherSlaveAddrs = msgContent;
+            if (!isLeader) {
+                Election.stopHeartbeat = true;
+            } else {
+                log.info("接收到最新的slave集群地址：" + msgContent);
+                Server.otherSlaveAddrs = msgContent;
+            }
 
-        } else if (msgType == Consts.MSG_TYPE_ACTIVE_SLAVE) {
-            log.info("slave：" + ctx.channel().remoteAddress() + " is connected");
-//            channelGroup.add(ctx.channel());
-            Server.slaveClientChannels.add(ctx.channel());
-            // 保存slave的地址
-            ChannelUtil.storeSlaveAddress(ctx.channel(), msgRsrv.getPort());
-        } else if (msgType == Consts.MSG_TYPE_UNCOMMITED_ACK) {
+        }
+//        else if (msgType == Consts.MSG_TYPE_ACTIVE_SLAVE) {
+//            log.info("slave：" + ctx.channel().remoteAddress() + " is connected");
+////            channelGroup.add(ctx.channel());
+//            Server.slaveClientChannels.add(ctx.channel());
+//            // 保存slave的地址
+//            ChannelUtil.storeSlaveAddress(ctx.channel(), msgRsrv.getPort());
+//        }
+        else if (msgType == Consts.MSG_TYPE_UNCOMMITED_ACK) {
             log.info("接收到slave：" + ctx.channel().remoteAddress() + "的ack");
             int ackCnt = 0;
             if (Server.ackMap.get(msgId) != null) {

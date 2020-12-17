@@ -1,15 +1,16 @@
 package com.zp.utils;
 
 import com.zp.constrants.Consts;
+import com.zp.entity.Election;
 import com.zp.entity.ProjectMsg;
 import com.zp.entity.Server;
 import com.zp.meta.MetaData;
 import com.zp.protobuf.MsgPOJO;
 import io.netty.channel.ChannelHandlerContext;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -17,6 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @Author zp
  * @create 2020/12/11 10:55
  */
+@Slf4j
 public class MsgUtil {
     /**
      * 本地存储消息
@@ -90,7 +92,7 @@ public class MsgUtil {
         }
     }
 
-    public static void storeCommitedIndex(){
+    public static void storeCommitedIndex() {
         FileUtil.writeOverride(new File(MetaData.fileDir + Consts.FILE_NAME_GLOBAL_COMMITED_INDEX), MetaData.globalCommitedIndex.toString());
     }
 
@@ -120,7 +122,7 @@ public class MsgUtil {
                 MetaData.projectMsgMap = (ConcurrentHashMap<String, ProjectMsg>) ois.readObject();
             }
 
-            if(!excludeCommitedIndex) {
+            if (!excludeCommitedIndex) {
                 file = new File(MetaData.fileDir + Consts.FILE_NAME_GLOBAL_COMMITED_INDEX);
                 if (!file.exists()) {
                     file.createNewFile();
@@ -145,7 +147,7 @@ public class MsgUtil {
         // 发送heartbeat的ack，包括所有slave server的地址
         String remoteAddress = "";
         for (String s : Server.slaveServerList) {
-            if (!s.contains(String.valueOf(port))) {
+            if (!s.contains(String.valueOf(":" + port))) {
                 // 返回不包含自己的其它slave的地址
                 remoteAddress += s + ",";
             }
@@ -153,8 +155,12 @@ public class MsgUtil {
         if (!StringUtil.isEmpty(remoteAddress)) {
             remoteAddress = remoteAddress.substring(0, remoteAddress.length() - 1);
         }
+
+        log.info("准备返回slave集群地址：" + remoteAddress);
+
         MsgPOJO.Msg.Builder msgSend = MsgPOJO.Msg.newBuilder()
                 .setType(Consts.MSG_TYPE_HEARTBEAT_ACK)
+                .setIsLeader(Election.isLeader)
                 .setContent(remoteAddress);
         ctx.channel().writeAndFlush(msgSend);
     }

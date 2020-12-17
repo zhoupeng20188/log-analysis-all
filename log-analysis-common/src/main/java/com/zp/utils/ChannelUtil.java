@@ -29,5 +29,6 @@ public class ChannelUtil {
         String ip = inetSocketAddress.getAddress().getHostAddress();
         String address = ip + ":" + port;
         Server.slaveServerList.add(address);
+        Server.slaveClientChannels.add(channel);
     }
 }
