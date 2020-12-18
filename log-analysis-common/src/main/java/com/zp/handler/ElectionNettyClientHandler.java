@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 public class ElectionNettyClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-//        ElectionPOJO.Election.Builder msgSend = ElectionPOJO.Election.newBuilder()
         MsgPOJO.Msg.Builder msgSend = MsgPOJO.Msg.newBuilder()
                 .setType(Consts.MSG_TYPE_ELECTION)
                 .setTerm(Election.term)

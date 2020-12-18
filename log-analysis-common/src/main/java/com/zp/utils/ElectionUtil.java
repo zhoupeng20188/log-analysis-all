@@ -74,7 +74,6 @@ public class ElectionUtil {
                             socketChannel.pipeline().addLast(new ProtobufEncoder());
                             //配置Protobuf解码工具ProtobufVarint32FrameDecoder与ProtobufDecoder
                             socketChannel.pipeline().addLast(new ProtobufVarint32FrameDecoder());
-//                            socketChannel.pipeline().addLast(new ProtobufDecoder(ElectionPOJO.Election.getDefaultInstance()));
                             socketChannel.pipeline().addLast(new ProtobufDecoder(MsgPOJO.Msg.getDefaultInstance()));
                             socketChannel.pipeline().addLast(new ElectionNettyClientHandler());
                         }
@@ -102,7 +101,6 @@ public class ElectionUtil {
         }
         if (MetaData.globalCommitedIndex.get() < index) {
             // 发起获取日志同步请求
-//            ElectionPOJO.Election.Builder msgSend = ElectionPOJO.Election.newBuilder()
             MsgPOJO.Msg.Builder msgSend = MsgPOJO.Msg.newBuilder()
                     .setType(Consts.MSG_TYPE_LOG_INDEX_COPY_REQUEST)
                     .putAllMsgMap(msgMap);
@@ -170,7 +168,6 @@ public class ElectionUtil {
                 copyBytes = ByteUtil.appendToTail(bytes, copyBytes);
             }
         }
-//        ElectionPOJO.Election.Builder msgSend = ElectionPOJO.Election.newBuilder()
         MsgPOJO.Msg.Builder msgSend = MsgPOJO.Msg.newBuilder()
                 .setType(Consts.MSG_TYPE_LOG_COPY_DATA)
                 .setIndex(MetaData.globalCommitedIndex.get())

@@ -31,14 +31,6 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
         this.port = port;
     }
 
-//    @Override
-//    public void channelActive(ChannelHandlerContext ctx) throws Exception {
-//        MsgPOJO.Msg.Builder msgSend = MsgPOJO.Msg.newBuilder()
-//                .setType(Consts.MSG_TYPE_ACTIVE_SLAVE)
-//                .setPort(port);
-//        ctx.channel().writeAndFlush(msgSend);
-//    }
-
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         // 开始选举

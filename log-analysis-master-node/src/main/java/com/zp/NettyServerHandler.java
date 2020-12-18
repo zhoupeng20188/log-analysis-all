@@ -25,7 +25,6 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
     /**
      * 定义一个channel组，管理所有channel
      */
-//    private static ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         // 开始选举
