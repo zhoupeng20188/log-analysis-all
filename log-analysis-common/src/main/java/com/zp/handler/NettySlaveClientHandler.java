@@ -1,5 +1,6 @@
 package com.zp.handler;
 
+import com.zp.entity.Server;
 import com.zp.utils.ElectionUtil;
 import com.zp.utils.MsgUtil;
 import io.netty.channel.ChannelHandlerContext;
@@ -24,8 +25,10 @@ public class NettySlaveClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        // 开始选举
-        ElectionUtil.startElection(ctx.channel(), port);
+        if(Server.slaveClientChannels.contains(ctx.channel())) {
+            // 开始选举
+            ElectionUtil.startElection(ctx.channel(), port);
+        }
     }
 
     @Override

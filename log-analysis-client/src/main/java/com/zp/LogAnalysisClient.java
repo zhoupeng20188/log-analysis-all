@@ -110,6 +110,8 @@ public class LogAnalysisClient {
                 String[] addr = address.split(":");
                 // 尝试建立连接
                 channelFuture = bootstrap.connect(addr[0], Integer.parseInt(addr[1]));
+                // 睡眠500ms，不然程序执行太快还没有连接就走到下面isConnected还是false
+                Thread.sleep(500);
                 if (MetaData.isConnected) {
                     // 连接建立成功时
                     channel = channelFuture.channel();

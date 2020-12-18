@@ -20,6 +20,6 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         MetaData.isConnected = true;
-        log.info(ctx.channel().remoteAddress() + " is connected");
+        log.info("connected to {}", ctx.channel().remoteAddress());
     }
 }
