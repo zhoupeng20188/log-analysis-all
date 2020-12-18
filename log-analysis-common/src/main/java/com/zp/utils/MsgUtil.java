@@ -12,7 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
 import java.net.SocketAddress;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -162,6 +164,7 @@ public class MsgUtil {
 
         MsgPOJO.Msg.Builder msgSend = MsgPOJO.Msg.newBuilder()
                 .setType(Consts.MSG_TYPE_HEARTBEAT_ACK)
+                .setIndex(MetaData.globalCommitedIndex.get())
                 .setIsLeader(Election.isLeader)
                 .setContent(remoteAddress);
         ctx.channel().writeAndFlush(msgSend);
@@ -180,27 +183,31 @@ public class MsgUtil {
         // 对方是否为leader
         boolean isLeader = msgRsrv.getIsLeader();
         boolean isOldLeader = msgRsrv.getIsOldLeader();
+        int index = msgRsrv.getIndex();
         int port = msgRsrv.getPort();
-        log.debug("receive message：", msg);
+        log.debug("receive message：{}", msg);
         MsgPOJO.Msg.Builder builder = MsgPOJO.Msg.newBuilder();
         MsgPOJO.Msg.Builder msgSend = null;
         if (msgType == Consts.MSG_TYPE_HEARTBEAT) {
+            if (isOldLeader) {
+                // 停止向老master发送心跳
+                Election.stopHeartbeat = true;
+            }
             if (isLeader && Election.isLeader) {
                 // 对方是leader时，代表自己是老master重连，给新master发送心跳
                 Server.masterChannel = ctx.channel();
                 SocketAddress socketAddress = ctx.channel().remoteAddress();
                 String[] split = String.valueOf(socketAddress).replace("/", "").split(":");
-                log.debug("receive from  new master's connection, prepare to send heartbeat to new master...");
-                ThreadUtil.startHeartbeatThread(split[0], Integer.parseInt(split[1]));
+                log.debug("receive from new master's connection, prepare to send heartbeat to new master..");
                 // 更新master状态
                 Election.isLeader = false;
+                Election.isOldLeader = true;
+                ThreadUtil.startHeartbeatThread(split[0], Integer.parseInt(split[1]));
             } else {
                 // 保存slave的地址
                 ChannelUtil.storeSlaveAddress(ctx.channel(), port);
                 // 发送heartbeat的ack，包括所有slave server的地址
                 MsgUtil.sendHeartbeatAck(ctx, port);
-                // 停止向老master发送心跳
-                Election.stopHeartbeat = true;
             }
         } else if (msgType == Consts.MSG_TYPE_HEARTBEAT_ACK) {
             if (!isLeader) {
@@ -208,6 +215,11 @@ public class MsgUtil {
             } else {
                 log.debug("receive from latest slave cluster address(exclude self)：{}", msgContent);
                 Server.otherSlaveAddrs = msgContent;
+                if (MetaData.globalCommitedIndex.get() < index) {
+                    // 发送日志同步请求
+                    log.debug("prepare to send log copy request, local commitedIndex is {} master commitedIndex is {}", MetaData.globalCommitedIndex, index);
+                    checkAndSendLogCopyRequest(ctx.channel());
+                }
             }
         } else if (msgType == Consts.MSG_TYPE_UNCOMMITED) {
             log.info("receive from master's uncommited request!");
@@ -265,8 +277,6 @@ public class MsgUtil {
         } else if (msgType == Consts.MSG_TYPE_ELECTION) {
             // 选举轮次
             int electionId = msgRsrv.getElectionId();
-            // 消息index
-            int index = msgRsrv.getIndex();
             int term = msgRsrv.getTerm();
             log.info("receive from slave's vote request, now term:{},index:{}", Election.term, MetaData.globalCommitedIndex.get());
             if (Election.id <= electionId
@@ -305,28 +315,19 @@ public class MsgUtil {
             // 更新master信息
             Server.masterChannel = ctx.channel();
             ElectionUtil.handleTypeMaster(ctx.channel(), msgRsrv.getTerm(), msgRsrv.getIndex());
-        } else if (msgType == Consts.MSG_TYPE_HEARTBEAT) {
-            if (isOldLeader) {
-                // 停止向老master发送心跳
-                Election.stopHeartbeat = true;
-            }
-            if (isLeader && Election.isLeader) {
-                // 对方是leader时，代表自己是老master重连，给新master发送心跳
-                Server.masterChannel = ctx.channel();
-                SocketAddress socketAddress = ctx.channel().remoteAddress();
-                String[] split = String.valueOf(socketAddress).replace("/", "").split(":");
-                log.debug("receive from new master's connection, prepare to send heartbeat to new master..");
-                // 更新master状态
-                Election.isLeader = false;
-                Election.isOldLeader = true;
-                ThreadUtil.startHeartbeatThread(split[0], Integer.parseInt(split[1]));
-            } else {
-                // 保存slave的地址
-                ChannelUtil.storeSlaveAddress(ctx.channel(), port);
-                // 发送heartbeat的ack，包括所有slave server的地址
-                MsgUtil.sendHeartbeatAck(ctx, port);
-            }
-
         }
+    }
+
+    public static void checkAndSendLogCopyRequest(Channel channel) {
+        HashMap<String, Integer> msgMap = new HashMap<>();
+        for (Map.Entry<String, ProjectMsg> entry : MetaData.projectMsgMap.entrySet()) {
+            msgMap.put(entry.getKey(), entry.getValue().getCommitedIndex());
+        }
+        // 发起获取日志同步请求
+        MsgPOJO.Msg.Builder msgSend = MsgPOJO.Msg.newBuilder()
+                .setType(Consts.MSG_TYPE_LOG_INDEX_COPY_REQUEST)
+                .putAllMsgMap(msgMap);
+        channel.writeAndFlush(msgSend);
+
     }
 }

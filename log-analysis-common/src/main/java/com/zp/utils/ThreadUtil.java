@@ -35,14 +35,7 @@ public class ThreadUtil {
                                 Server.masterChannel.writeAndFlush(msgSend);
                                 log.debug("send heartbeat to master node：{}", Server.masterChannel.remoteAddress());
                             } else {
-                                // 重连老master
-//                            final EventLoop eventLoop = Server.masterChannel.eventLoop();
-//                            eventLoop.schedule(new Runnable() {
-//                                @Override
-//                                public void run() {
                                 NettyUtil.startNettyClient(new NettyClientHandler(Server.port), serverAddr, serverPort);
-//                                }
-//                            }, 10, TimeUnit.SECONDS);
                             }
                         }
                     }

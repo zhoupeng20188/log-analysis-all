@@ -35,7 +35,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ElectionUtil {
 
     public static void startElection(Channel channel,
-                                     int localPort){
+                                     int localPort) {
         log.info("master：{} is down", channel.remoteAddress() + "");
         int sleepTime = RandomUtil.electRandom();
         log.info("preparing to elect new leader,sleepTIme={}ms", sleepTime);
@@ -95,16 +95,10 @@ public class ElectionUtil {
         log.info("change master node to {}", channel.remoteAddress());
         // 更新term
         Election.term = term;
-        HashMap<String, Integer> msgMap = new HashMap<>();
-        for (Map.Entry<String, ProjectMsg> entry : MetaData.projectMsgMap.entrySet()) {
-            msgMap.put(entry.getKey(), entry.getValue().getCommitedIndex());
-        }
         if (MetaData.globalCommitedIndex.get() < index) {
-            // 发起获取日志同步请求
-            MsgPOJO.Msg.Builder msgSend = MsgPOJO.Msg.newBuilder()
-                    .setType(Consts.MSG_TYPE_LOG_INDEX_COPY_REQUEST)
-                    .putAllMsgMap(msgMap);
-            channel.writeAndFlush(msgSend);
+            // 发送日志同步请求
+            log.debug("prepare to send log copy request, local commitedIndex is {} master commitedIndex is {}", MetaData.globalCommitedIndex, index);
+            MsgUtil.checkAndSendLogCopyRequest(channel);
         }
     }
 
