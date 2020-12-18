@@ -3,11 +3,8 @@ package com.zp.utils;
 import com.zp.constrants.Consts;
 import com.zp.entity.Election;
 import com.zp.entity.Server;
-import com.zp.handler.NettyClientHandler;
+import com.zp.handler.NettySlaveClientHandler;
 import com.zp.protobuf.MsgPOJO;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.EventLoop;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.Executors;
@@ -35,7 +32,7 @@ public class ThreadUtil {
                                 Server.masterChannel.writeAndFlush(msgSend);
                                 log.debug("send heartbeat to master node：{}", Server.masterChannel.remoteAddress());
                             } else {
-                                NettyUtil.startNettyClient(new NettyClientHandler(Server.port), serverAddr, serverPort);
+                                NettyUtil.startNettyClient(new NettySlaveClientHandler(Server.port), serverAddr, serverPort);
                             }
                         }
                     }

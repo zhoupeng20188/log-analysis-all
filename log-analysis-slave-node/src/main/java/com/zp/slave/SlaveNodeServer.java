@@ -2,7 +2,7 @@ package com.zp.slave;
 
 import com.zp.entity.Server;
 import com.zp.handler.ElectionNettyServerHandler;
-import com.zp.handler.NettyClientHandler;
+import com.zp.handler.NettySlaveClientHandler;
 import com.zp.protobuf.MsgPOJO;
 import com.zp.utils.MsgUtil;
 import com.zp.utils.NettyUtil;
@@ -64,7 +64,7 @@ public class SlaveNodeServer {
     public void start() {
         // 启动时加载index到内存中
         MsgUtil.initIndex();
-        NettyUtil.startNettyClient(new NettyClientHandler(Server.port), serverAddr, serverPort);
+        NettyUtil.startNettyClient(new NettySlaveClientHandler(Server.port), serverAddr, serverPort);
         ThreadUtil.startHeartbeatThread(serverAddr, serverPort);
         startNettyServer();
     }

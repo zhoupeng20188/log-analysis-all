@@ -32,4 +32,8 @@ public class MetaData {
      * 文件存放目录
      */
     public static String fileDir = "";
+    /**
+     * 是否连接成功
+     */
+    public static volatile boolean isConnected;
 }

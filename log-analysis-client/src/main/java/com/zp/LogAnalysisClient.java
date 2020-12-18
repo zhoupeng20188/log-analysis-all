@@ -2,6 +2,8 @@ package com.zp;
 
 
 import com.zp.constrants.Consts;
+import com.zp.handler.NettyClientHandler;
+import com.zp.meta.MetaData;
 import com.zp.protobuf.MsgPOJO;
 import com.zp.utils.SnowFlakeUUID;
 import io.netty.bootstrap.Bootstrap;
@@ -40,12 +42,10 @@ public class LogAnalysisClient {
 
     private String serverAddr;
 
-    private int serverPort;
 
-    public LogAnalysisClient(String projectId, String serverAddr, int serverPort) {
+    public LogAnalysisClient(String projectId, String serverAddr) {
         this.projectId = projectId;
         this.serverAddr = serverAddr;
-        this.serverPort = serverPort;
     }
 
     public String getProjectId() {
@@ -62,14 +62,6 @@ public class LogAnalysisClient {
 
     public void setServerAddr(String serverAddr) {
         this.serverAddr = serverAddr;
-    }
-
-    public int getServerPort() {
-        return serverPort;
-    }
-
-    public void setServerPort(int serverPort) {
-        this.serverPort = serverPort;
     }
 
     public static Logger getLog() {
@@ -106,13 +98,25 @@ public class LogAnalysisClient {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             socketChannel.pipeline().addLast(new ProtobufEncoder());
+                            socketChannel.pipeline().addLast(new NettyClientHandler());
                         }
                     });
             log.info("log-analysis-client is started");
             // 客户端连接服务端
-            ChannelFuture channelFuture = bootstrap.connect(serverAddr, serverPort);
+            ChannelFuture channelFuture;
 
-            channel = channelFuture.channel();
+            String[] split = serverAddr.split(",");
+            for (String address : split) {
+                String[] addr = address.split(":");
+                // 尝试建立连接
+                channelFuture = bootstrap.connect(addr[0], Integer.parseInt(addr[1]));
+                if (MetaData.isConnected) {
+                    // 连接建立成功时
+                    channel = channelFuture.channel();
+                    break;
+                }
+            }
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -123,7 +127,7 @@ public class LogAnalysisClient {
         ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
         scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
             public void run() {
-                synchronized (LogStore.class){
+                synchronized (LogStore.class) {
                     String content = LogStore.getContent();
                     if (content != null && !content.equals("")) {
                         // 日志不为空时，上报
